@@ -1,0 +1,175 @@
+{
+  "districts": {
+    "Warangal": {
+      "state": "Telangana",
+      "lat": 17.9784,
+      "lon": 79.5941,
+      "soil": {
+        "type": "Red Sandy Loam",
+        "pH": 6.4,
+        "organic_carbon_pct": 0.52,
+        "nitrogen_kg_ha": 168,
+        "phosphorus_kg_ha": 12,
+        "potassium_kg_ha": 285,
+        "texture": "sandy_loam",
+        "AWC_mm": 110,
+        "groundwater_depth_m": 8.2
+      },
+      "agro_zone": "Southern Telangana Zone"
+    },
+    "Guntur": {
+      "state": "Andhra Pradesh",
+      "lat": 16.3067,
+      "lon": 80.4365,
+      "soil": {
+        "type": "Black Cotton Soil",
+        "pH": 7.8,
+        "organic_carbon_pct": 0.68,
+        "nitrogen_kg_ha": 212,
+        "phosphorus_kg_ha": 18,
+        "potassium_kg_ha": 340,
+        "texture": "clay",
+        "AWC_mm": 165,
+        "groundwater_depth_m": 12.5
+      },
+      "agro_zone": "Krishna-Guntur Delta Zone"
+    },
+    "Nalgonda": {
+      "state": "Telangana",
+      "lat": 17.0579,
+      "lon": 79.2671,
+      "soil": {
+        "type": "Red Loam",
+        "pH": 6.1,
+        "organic_carbon_pct": 0.44,
+        "nitrogen_kg_ha": 145,
+        "phosphorus_kg_ha": 9,
+        "potassium_kg_ha": 220,
+        "texture": "loam",
+        "AWC_mm": 98,
+        "groundwater_depth_m": 15.8
+      },
+      "agro_zone": "Southern Telangana Zone"
+    },
+    "Vidisha": {
+      "state": "Madhya Pradesh",
+      "lat": 23.5251,
+      "lon": 77.8082,
+      "soil": {
+        "type": "Medium Black Soil",
+        "pH": 7.5,
+        "organic_carbon_pct": 0.61,
+        "nitrogen_kg_ha": 195,
+        "phosphorus_kg_ha": 15,
+        "potassium_kg_ha": 310,
+        "texture": "clay_loam",
+        "AWC_mm": 145,
+        "groundwater_depth_m": 18.3
+      },
+      "agro_zone": "Malwa Plateau Zone"
+    },
+    "Nashik": {
+      "state": "Maharashtra",
+      "lat": 19.9975,
+      "lon": 73.7898,
+      "soil": {
+        "type": "Medium Black Soil",
+        "pH": 7.2,
+        "organic_carbon_pct": 0.72,
+        "nitrogen_kg_ha": 228,
+        "phosphorus_kg_ha": 22,
+        "potassium_kg_ha": 295,
+        "texture": "clay_loam",
+        "AWC_mm": 155,
+        "groundwater_depth_m": 10.1
+      },
+      "agro_zone": "Western Maharashtra Zone"
+    },
+    "Bijapur": {
+      "state": "Karnataka",
+      "lat": 16.8302,
+      "lon": 75.7100,
+      "soil": {
+        "type": "Deep Black Soil",
+        "pH": 7.9,
+        "organic_carbon_pct": 0.55,
+        "nitrogen_kg_ha": 182,
+        "phosphorus_kg_ha": 14,
+        "potassium_kg_ha": 260,
+        "texture": "clay",
+        "AWC_mm": 170,
+        "groundwater_depth_m": 22.4
+      },
+      "agro_zone": "Northern Dry Zone"
+    },
+    "Chittoor": {
+      "state": "Andhra Pradesh",
+      "lat": 13.2172,
+      "lon": 79.1003,
+      "soil": {
+        "type": "Red Sandy Loam",
+        "pH": 6.6,
+        "organic_carbon_pct": 0.48,
+        "nitrogen_kg_ha": 158,
+        "phosphorus_kg_ha": 11,
+        "potassium_kg_ha": 198,
+        "texture": "sandy_loam",
+        "AWC_mm": 102,
+        "groundwater_depth_m": 20.6
+      },
+      "agro_zone": "Southern Andhra Zone"
+    },
+    "Kurnool": {
+      "state": "Andhra Pradesh",
+      "lat": 15.8281,
+      "lon": 78.0373,
+      "soil": {
+        "type": "Red Sandy Loam",
+        "pH": 6.8,
+        "organic_carbon_pct": 0.41,
+        "nitrogen_kg_ha": 138,
+        "phosphorus_kg_ha": 8,
+        "potassium_kg_ha": 188,
+        "texture": "sandy_loam",
+        "AWC_mm": 92,
+        "groundwater_depth_m": 25.1
+      },
+      "agro_zone": "Rayalaseema Zone"
+    },
+    "Solapur": {
+      "state": "Maharashtra",
+      "lat": 17.6805,
+      "lon": 75.9064,
+      "soil": {
+        "type": "Shallow Black Soil",
+        "pH": 7.6,
+        "organic_carbon_pct": 0.39,
+        "nitrogen_kg_ha": 132,
+        "phosphorus_kg_ha": 10,
+        "potassium_kg_ha": 245,
+        "texture": "clay",
+        "AWC_mm": 88,
+        "groundwater_depth_m": 28.7
+      },
+      "agro_zone": "Scarcity Zone"
+    },
+    "Madhubani": {
+      "state": "Bihar",
+      "lat": 26.3544,
+      "lon": 86.0715,
+      "soil": {
+        "type": "Alluvial Soil",
+        "pH": 6.9,
+        "organic_carbon_pct": 0.88,
+        "nitrogen_kg_ha": 268,
+        "phosphorus_kg_ha": 28,
+        "potassium_kg_ha": 312,
+        "texture": "loam",
+        "AWC_mm": 188,
+        "groundwater_depth_m": 3.4
+      },
+      "agro_zone": "North Bihar Plain Zone"
+    }
+  },
+  "_note": "soil values derived from SoilGrids v2.0 API + ICAR district reports. groundwater_depth_m from CGWB seasonal data (post-monsoon 2024)"
+}

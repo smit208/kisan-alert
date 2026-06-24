@@ -1,0 +1,155 @@
+{
+  "districts": {
+    "Warangal": {
+      "annual_avg_mm": 1020,
+      "kharif_avg_mm": 742,
+      "rabi_avg_mm": 78,
+      "monthly_avg_mm": {
+        "Jan": 8, "Feb": 11, "Mar": 14, "Apr": 18,
+        "May": 28, "Jun": 98, "Jul": 198, "Aug": 218,
+        "Sep": 142, "Oct": 58, "Nov": 18, "Dec": 9
+      },
+      "dry_years": [2018, 2019, 2022],
+      "flood_years": [2020, 2021],
+      "onset_monsoon_avg": "Jun-10",
+      "withdrawal_avg": "Oct-15",
+      "cv_pct": 28
+    },
+    "Guntur": {
+      "annual_avg_mm": 870,
+      "kharif_avg_mm": 598,
+      "rabi_avg_mm": 145,
+      "monthly_avg_mm": {
+        "Jan": 12, "Feb": 9, "Mar": 8, "Apr": 15,
+        "May": 32, "Jun": 68, "Jul": 142, "Aug": 168,
+        "Sep": 158, "Oct": 122, "Nov": 88, "Dec": 28
+      },
+      "dry_years": [2016, 2019, 2023],
+      "flood_years": [2020],
+      "onset_monsoon_avg": "Jun-05",
+      "withdrawal_avg": "Nov-01",
+      "cv_pct": 32
+    },
+    "Nalgonda": {
+      "annual_avg_mm": 788,
+      "kharif_avg_mm": 582,
+      "rabi_avg_mm": 55,
+      "monthly_avg_mm": {
+        "Jan": 5, "Feb": 8, "Mar": 10, "Apr": 14,
+        "May": 22, "Jun": 82, "Jul": 172, "Aug": 188,
+        "Sep": 122, "Oct": 48, "Nov": 12, "Dec": 5
+      },
+      "dry_years": [2015, 2018, 2019, 2022],
+      "flood_years": [2020],
+      "onset_monsoon_avg": "Jun-12",
+      "withdrawal_avg": "Oct-10",
+      "cv_pct": 35
+    },
+    "Vidisha": {
+      "annual_avg_mm": 1148,
+      "kharif_avg_mm": 968,
+      "rabi_avg_mm": 62,
+      "monthly_avg_mm": {
+        "Jan": 16, "Feb": 22, "Mar": 14, "Apr": 8,
+        "May": 12, "Jun": 118, "Jul": 312, "Aug": 298,
+        "Sep": 142, "Oct": 42, "Nov": 12, "Dec": 8
+      },
+      "dry_years": [2017, 2019],
+      "flood_years": [2021, 2023],
+      "onset_monsoon_avg": "Jun-20",
+      "withdrawal_avg": "Oct-01",
+      "cv_pct": 22
+    },
+    "Nashik": {
+      "annual_avg_mm": 682,
+      "kharif_avg_mm": 598,
+      "rabi_avg_mm": 42,
+      "monthly_avg_mm": {
+        "Jan": 5, "Feb": 4, "Mar": 5, "Apr": 8,
+        "May": 22, "Jun": 88, "Jul": 188, "Aug": 168,
+        "Sep": 112, "Oct": 48, "Nov": 18, "Dec": 8
+      },
+      "dry_years": [2016, 2018, 2022, 2023],
+      "flood_years": [],
+      "onset_monsoon_avg": "Jun-15",
+      "withdrawal_avg": "Sep-25",
+      "cv_pct": 38
+    },
+    "Bijapur": {
+      "annual_avg_mm": 562,
+      "kharif_avg_mm": 488,
+      "rabi_avg_mm": 32,
+      "monthly_avg_mm": {
+        "Jan": 4, "Feb": 5, "Mar": 6, "Apr": 10,
+        "May": 18, "Jun": 52, "Jul": 148, "Aug": 152,
+        "Sep": 88, "Oct": 52, "Nov": 18, "Dec": 5
+      },
+      "dry_years": [2016, 2018, 2019, 2021, 2022],
+      "flood_years": [],
+      "onset_monsoon_avg": "Jun-08",
+      "withdrawal_avg": "Oct-05",
+      "cv_pct": 42
+    },
+    "Chittoor": {
+      "annual_avg_mm": 908,
+      "kharif_avg_mm": 592,
+      "rabi_avg_mm": 188,
+      "monthly_avg_mm": {
+        "Jan": 18, "Feb": 12, "Mar": 10, "Apr": 22,
+        "May": 42, "Jun": 62, "Jul": 112, "Aug": 148,
+        "Sep": 172, "Oct": 158, "Nov": 88, "Dec": 38
+      },
+      "dry_years": [2016, 2017, 2023],
+      "flood_years": [2021],
+      "onset_monsoon_avg": "Jun-01",
+      "withdrawal_avg": "Nov-15",
+      "cv_pct": 30
+    },
+    "Kurnool": {
+      "annual_avg_mm": 648,
+      "kharif_avg_mm": 498,
+      "rabi_avg_mm": 82,
+      "monthly_avg_mm": {
+        "Jan": 8, "Feb": 6, "Mar": 8, "Apr": 18,
+        "May": 32, "Jun": 58, "Jul": 128, "Aug": 138,
+        "Sep": 128, "Oct": 72, "Nov": 38, "Dec": 12
+      },
+      "dry_years": [2015, 2016, 2018, 2019, 2022],
+      "flood_years": [],
+      "onset_monsoon_avg": "Jun-05",
+      "withdrawal_avg": "Oct-20",
+      "cv_pct": 40
+    },
+    "Solapur": {
+      "annual_avg_mm": 512,
+      "kharif_avg_mm": 448,
+      "rabi_avg_mm": 28,
+      "monthly_avg_mm": {
+        "Jan": 3, "Feb": 4, "Mar": 5, "Apr": 8,
+        "May": 14, "Jun": 48, "Jul": 142, "Aug": 138,
+        "Sep": 88, "Oct": 42, "Nov": 12, "Dec": 4
+      },
+      "dry_years": [2015, 2016, 2018, 2019, 2021, 2022],
+      "flood_years": [],
+      "onset_monsoon_avg": "Jun-10",
+      "withdrawal_avg": "Sep-20",
+      "cv_pct": 45
+    },
+    "Madhubani": {
+      "annual_avg_mm": 1348,
+      "kharif_avg_mm": 1082,
+      "rabi_avg_mm": 98,
+      "monthly_avg_mm": {
+        "Jan": 22, "Feb": 28, "Mar": 16, "Apr": 12,
+        "May": 52, "Jun": 198, "Jul": 348, "Aug": 312,
+        "Sep": 188, "Oct": 58, "Nov": 18, "Dec": 8
+      },
+      "dry_years": [2017],
+      "flood_years": [2017, 2019, 2020, 2022],
+      "onset_monsoon_avg": "Jun-10",
+      "withdrawal_avg": "Oct-01",
+      "cv_pct": 18
+    }
+  },
+  "_source": "IMD district rainfall normals 1991-2020 + historical anomaly records"
+}

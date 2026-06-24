@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KisanAlert — Agricultural Intelligence Platform</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans:wght@400;500;600&family=Noto+Sans+Telugu:wght@400;500&family=Noto+Sans+Kannada:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===== TOP STATUS BAR ===== -->
+  <div class="status-bar">
+    <div class="status-bar-inner">
+      <span class="pulse-dot"></span>
+      <span class="status-text">KisanAlert v1.0</span>
+      <span class="status-divider">|</span>
+      <span class="status-text">11 Districts Active</span>
+      <span class="status-divider">|</span>
+      <span class="status-text gemini-tag">✦ Gemini Powered</span>
+      <span class="status-divider">|</span>
+      <span class="status-text" id="live-clock"></span>
+    </div>
+    <div class="status-bar-right">
+      <span class="uptime-badge">● LIVE</span>
+    </div>
+  </div>
+
+  <!-- ===== MAIN HEADER ===== -->
+  <header class="main-header">
+    <div class="header-logo">
+      <div class="logo-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <path d="M16 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2z" fill="rgba(74,222,128,0.15)" stroke="#4ade80" stroke-width="1.5"/>
+          <path d="M10 20 Q13 10 16 14 Q19 18 22 8" stroke="#4ade80" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <circle cx="16" cy="22" r="2" fill="#f59e0b"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <h1>KisanAlert</h1>
+        <span>Agricultural Intelligence Platform</span>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="header-badge">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#4ade80" stroke-width="1.2"/><path d="M7 4v3l2 2" stroke="#4ade80" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Real-time Advisory
+      </div>
+      <div class="header-badge warn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1 L13 13 H1 Z" stroke="#f59e0b" stroke-width="1.2" stroke-linejoin="round"/><path d="M7 6v3M7 10.5v.5" stroke="#f59e0b" stroke-width="1.2" stroke-linecap="round"/></svg>
+        3 Alerts Active
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== TWO-PANEL DASHBOARD ===== -->
+  <main class="dashboard-grid">
+
+    <!-- ==================== LEFT PANEL: SMS/VOICE SIMULATOR ==================== -->
+    <section class="panel panel-left" id="farmer-panel">
+      <div class="panel-header">
+        <h2 class="panel-title">
+          <span class="panel-title-icon">📱</span>
+          Farmer SMS / Voice Simulator
+        </h2>
+        <span class="panel-subtitle">Live Conversation Interface</span>
+      </div>
+
+      <!-- Selector row -->
+      <div class="selector-row">
+        <div class="selector-group">
+          <label for="lang-select">Language</label>
+          <select id="lang-select" class="custom-select">
+            <option value="hi">हिंदी</option>
+            <option value="te" selected>తెలుగు</option>
+            <option value="kn">ಕನ್ನಡ</option>
+            <option value="mr">मराठी</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+        <div class="selector-group">
+          <label for="district-select">District</label>
+          <select id="district-select" class="custom-select">
+            <option value="Warangal">Warangal</option>
+            <option value="Guntur">Guntur</option>
+            <option value="Nalgonda">Nalgonda</option>
+            <option value="Vidisha">Vidisha</option>
+            <option value="Nashik">Nashik</option>
+            <option value="Bijapur">Bijapur</option>
+            <option value="Chittoor" selected>Chittoor</option>
+            <option value="Kurnool">Kurnool</option>
+            <option value="Solapur">Solapur</option>
+            <option value="Madhubani">Madhubani</option>
+          </select>
+        </div>
+        <div class="farmer-id-badge" id="current-farmer-badge">
+          <span class="farmer-avatar">👤</span>
+          <span id="farmer-name-display">Ramaiah (+91 94408 12345)</span>
+        </div>
+      </div>
+
+      <!-- Phone mockup -->
+      <div class="phone-mockup">
+        <!-- WhatsApp-style header -->
+        <div class="phone-header">
+          <div class="phone-header-back">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9l5 5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="phone-header-avatar">🌾</div>
+          <div class="phone-header-info">
+            <div class="phone-contact-name">KisanAlert Bot</div>
+            <div class="phone-contact-status">
+              <span class="online-dot"></span>
+              Online — Gemini 1.5
+            </div>
+          </div>
+          <div class="phone-header-actions">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/><path d="M10 7v3l2 2" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+
+        <!-- Chat messages area -->
+        <div class="chat-messages" id="chat-messages">
+          <!-- Messages injected by JS -->
+        </div>
+
+        <!-- Quick actions inside phone -->
+        <div class="quick-actions">
+          <button class="quick-btn" data-action="crop">🌾 Crop Advice</button>
+          <button class="quick-btn" data-action="weather">🌦️ Weather Alert</button>
+          <button class="quick-btn" data-action="diagnose">🔬 Diagnose Crop</button>
+        </div>
+
+        <!-- Input bar -->
+        <div class="chat-input-bar">
+          <label class="img-upload-btn" title="Upload crop image for diagnosis">
+            <input type="file" id="img-upload" accept="image/*" style="display:none;" />
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <rect x="2" y="4" width="18" height="14" rx="3" stroke="#4ade80" stroke-width="1.5"/>
+              <circle cx="8" cy="10" r="2" stroke="#4ade80" stroke-width="1.5"/>
+              <path d="M2 15l4-4 3 3 3-3 5 5" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </label>
+          <input type="text" id="chat-input" class="chat-input" placeholder="Type your message..." />
+          <button class="mic-btn" id="mic-btn" title="Voice input (simulated)">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <rect x="6" y="1" width="6" height="10" rx="3" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M3 9a6 6 0 0012 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="9" y1="15" x2="9" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button class="send-btn" id="send-btn">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M2 9h14M10 3l6 6-6 6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== RIGHT PANEL: ADMIN / RSK WORKER VIEW ==================== -->
+    <section class="panel panel-right" id="admin-panel">
+
+      <div class="panel-header">
+        <h2 class="panel-title" style="color: #4ade80;">
+          <span class="panel-title-icon">🌿</span>
+          Kisan Seva Dashboard
+        </h2>
+        <span class="panel-subtitle">RSK Extension Worker View</span>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="stat-cards-row">
+        <div class="stat-card" id="stat-farmers">
+          <div class="stat-icon">👨‍🌾</div>
+          <div class="stat-body">
+            <div class="stat-value" data-target="2847" id="stat-val-farmers">0</div>
+            <div class="stat-label">Farmers Reached</div>
+          </div>
+          <div class="stat-trend up">+12%</div>
+        </div>
+        <div class="stat-card" id="stat-alerts">
+          <div class="stat-icon">📢</div>
+          <div class="stat-body">
+            <div class="stat-value amber" data-target="143" id="stat-val-alerts">0</div>
+            <div class="stat-label">Alerts Sent Today</div>
+          </div>
+          <div class="stat-trend up">+8%</div>
+        </div>
+        <div class="stat-card" id="stat-flagged">
+          <div class="stat-icon">🚩</div>
+          <div class="stat-body">
+            <div class="stat-value danger" data-target="17" id="stat-val-flagged">0</div>
+            <div class="stat-label">Cases Flagged for RSK</div>
+          </div>
+          <div class="stat-trend danger-trend">+3 new</div>
+        </div>
+      </div>
+
+      <!-- Tab navigation -->
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="flagged">🚩 Flagged Cases</button>
+        <button class="tab-btn" data-tab="recommendations">📋 Recommendations</button>
+        <button class="tab-btn" data-tab="alerts">⚡ Alerts Sent</button>
+        <button class="tab-btn" data-tab="farmers">👥 Active Farmers</button>
+      </div>
+
+      <!-- Tab content panels -->
+      <div class="tab-content" id="tab-content">
+
+        <!-- FLAGGED CASES TAB -->
+        <div class="tab-pane active" id="tab-flagged">
+          <div class="table-toolbar">
+            <span class="table-title">Recent Flagged Cases</span>
+            <button class="refresh-btn" id="refresh-cases-btn">↻ Refresh</button>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table" id="flagged-table">
+              <thead>
+                <tr>
+                  <th>Farmer ID</th>
+                  <th>District</th>
+                  <th>Crop Photo</th>
+                  <th>Diagnosis</th>
+                  <th>Severity</th>
+                  <th>RSK Center</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="flagged-tbody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- RECOMMENDATIONS TAB -->
+        <div class="tab-pane" id="tab-recommendations">
+          <div class="rec-grid" id="rec-grid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- ALERTS TAB -->
+        <div class="tab-pane" id="tab-alerts">
+          <div class="alerts-list" id="alerts-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- ACTIVE FARMERS TAB -->
+        <div class="tab-pane" id="tab-farmers">
+          <div class="farmers-grid" id="farmers-grid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Live update ticker -->
+      <div class="live-ticker" id="live-ticker">
+        <span class="ticker-dot"></span>
+        <span id="ticker-text">Monitoring 11 districts... Next update in 30s</span>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ===== IMAGE PREVIEW MODAL ===== -->
+  <div class="modal-overlay" id="img-modal" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Crop Disease Diagnosis</h3>
+        <button class="modal-close" id="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <img id="modal-preview-img" src="" alt="Crop preview" class="modal-img" />
+        <div class="modal-meta">
+          <span class="modal-label">Selected Image</span>
+          <span id="modal-filename">—</span>
+        </div>
+        <button class="modal-submit-btn" id="modal-diagnose-btn">
+          🔬 Analyze with Gemini Vision
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
