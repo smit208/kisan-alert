@@ -289,12 +289,16 @@ function addMessage(role, text, senderLabel) {
 // Very simple text formatter — bold, line breaks, bullets
 function formatBotText(text) {
   if (!text) return '';
+  // Strip --- horizontal rules (look AI-generated)
+  text = text.replace(/^-{3,}\s*$/gm, '');
   // Bold **text**
   text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   // Bullet points
   text = text.replace(/^• (.+)/gm, '<span style="display:flex;gap:6px;align-items:flex-start;margin:2px 0"><span style="color:#4ade80;font-size:14px;line-height:1.4">•</span><span>$1</span></span>');
   // Line breaks
   text = text.replace(/\n/g, '<br/>');
+  // Clean up multiple consecutive <br/>
+  text = text.replace(/(<br\/>){3,}/g, '<br/><br/>');
   return text;
 }
 
@@ -893,13 +897,55 @@ function initSelectors() {
   langSel.addEventListener('change', function() {
     currentLang = langSel.value;
     updatePlaceholder();
+    updateFarmerForLang(currentLang);
+    reloadChatForLang(currentLang);
   });
 
   distSel.addEventListener('change', function() {
     currentDistrict = distSel.value;
-    // update weather alert mock text
-    MOCK_CHAT_RESPONSES.weather_alert = MOCK_CHAT_RESPONSES.weather_alert.replace(/District:.*?\n/, 'District: ' + currentDistrict + '\n');
+    updateFarmerForDistrict(currentDistrict);
   });
+}
+
+// Farmer names per language for realism
+var FARMERS_BY_LANG = {
+  hi: { name: 'Ramesh Kumar',   phone: '+91 98765 43210' },
+  te: { name: 'Ramaiah',        phone: '+91 94408 12345' },
+  kn: { name: 'Basavaraj',      phone: '+91 96325 87410' },
+  mr: { name: 'Mangesh Patil',  phone: '+91 90112 34567' },
+  en: { name: 'David Thomas',   phone: '+91 99400 11223' }
+};
+
+// Greeting message when language switches
+var LANG_GREETINGS = {
+  hi: 'नमस्ते! मैं KisanAlert हूँ। आपकी खेती से जुड़ी किसी भी समस्या में मदद करूँगा। 🌾\n\nआप पूछ सकते हैं:\n• इस मौसम में कौन सी फसल लगाएं?\n• बारिश का मौसम कैसा रहेगा?\n• फसल में बीमारी की पहचान करें',
+  te: 'నమస్కారం! నేను KisanAlert. మీ వ్యవసాయంలో సహాయం చేయడానికి ఇక్కడ ఉన్నాను. 🌾\n\nమీరు అడగవచ్చు:\n• ఈ సీజన్‌లో ఏ పంట వేయాలి?\n• వర్షపాతం ఎంత ఉంటుంది?\n• పంట వ్యాధి నిర్ధారణ చేయండి',
+  kn: 'ನಮಸ್ಕಾರ! ನಾನು KisanAlert. ನಿಮ್ಮ ಕೃಷಿಗೆ ಸಹಾಯ ಮಾಡಲು ಇಲ್ಲಿದ್ದೇನೆ. 🌾\n\nನೀವು ಕೇಳಬಹುದು:\n• ಈ ಋತುವಿನಲ್ಲಿ ಯಾವ ಬೆಳೆ ಹಾಕಬೇಕು?\n• ಮಳೆ ಮುನ್ಸೂಚನೆ ಏನು?\n• ಬೆಳೆ ರೋಗ ಪತ್ತೆ ಮಾಡಿ',
+  mr: 'नमस्कार! मी KisanAlert. तुमच्या शेतीसाठी मदत करण्यासाठी इथे आहे. 🌾\n\nतुम्ही विचारू शकता:\n• या हंगामात कोणते पीक लावावे?\n• पाऊस किती पडेल?\n• पिकाचा रोग ओळखा',
+  en: 'Hello! I am KisanAlert, your AI farming assistant powered by Gemini. 🌾\n\nYou can ask me:\n• What crops to grow this season?\n• Rainfall forecast for your district?\n• Diagnose a crop disease from a photo'
+};
+
+function updateFarmerForLang(lang) {
+  var farmer = FARMERS_BY_LANG[lang] || FARMERS_BY_LANG['en'];
+  currentFarmer = farmer;
+  var badge = document.getElementById('farmer-name-display');
+  if (badge) badge.textContent = farmer.name + ' (' + farmer.phone + ')';
+}
+
+function updateFarmerForDistrict(district) {
+  var badge = document.getElementById('farmer-name-display');
+  if (badge) badge.textContent = currentFarmer.name + ' (' + currentFarmer.phone + ')';
+}
+
+function reloadChatForLang(lang) {
+  // Clear chat
+  if (chatEl) chatEl.innerHTML = '';
+
+  // Add date separator
+  addDateSep(nowDateStr());
+
+  // Show greeting in new language immediately
+  addMessage('bot', LANG_GREETINGS[lang] || LANG_GREETINGS['en'], 'KisanAlert 🌿');
 }
 
 function updatePlaceholder() {
@@ -913,6 +959,7 @@ function updatePlaceholder() {
   var input = document.getElementById('chat-input');
   if (input) input.placeholder = placeholders[currentLang] || 'Type your message...';
 }
+
 
 // ============================================================
 //  IMAGE UPLOAD / MODAL
