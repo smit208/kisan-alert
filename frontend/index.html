@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -20,9 +20,9 @@
       <span class="pulse-dot"></span>
       <span class="status-text">KisanAlert v1.0</span>
       <span class="status-divider">|</span>
-      <span class="status-text"><span style="color:#4ade80;font-weight:700">1 Live Pilot</span> Â· 10 Onboarding</span>
+      <span class="status-text"><span style="color:#4ade80;font-weight:700">1 Live Pilot</span> · 10 Onboarding</span>
       <span class="status-divider">|</span>
-      <span class="status-text gemini-tag">âœ¦ Gemini Powered</span>
+      <span class="status-text gemini-tag">✦ Gemini Powered</span>
       <span class="status-divider">|</span>
       <span class="status-text" id="live-clock">--:-- --</span>
     </div>
@@ -30,7 +30,7 @@
       <div id="connectivity-badge" class="conn-badge data-mode" onclick="toggleConnectivity()">
         <span class="conn-dot"></span><span id="conn-label">Data Mode</span>
       </div>
-      <div class="uptime-badge">â— LIVE</div>
+      <div class="uptime-badge">● LIVE</div>
     </div>
   </div>
 
@@ -68,7 +68,7 @@
     <section class="panel panel-left" id="farmer-panel">
       <div class="panel-header">
         <h2 class="panel-title">
-          <span class="panel-title-icon">ðŸ“±</span>
+          <span class="panel-title-icon">📱</span>
           Farmer SMS / Voice Simulator
         </h2>
         <span class="panel-subtitle">Live Conversation Interface</span>
@@ -79,10 +79,10 @@
         <div class="selector-group">
           <label for="lang-select">Language</label>
           <select id="lang-select" class="custom-select">
-            <option value="hi">à¤¹à¤¿à¤‚à¤¦à¥€</option>
-            <option value="te" selected>à°¤à±†à°²à±à°—à±</option>
-            <option value="kn">à²•à²¨à³à²¨à²¡</option>
-            <option value="mr">à¤®à¤°à¤¾à¤ à¥€</option>
+            <option value="hi">हिंदी</option>
+            <option value="te" selected>తెలుగు</option>
+            <option value="kn">ಕನ್ನಡ</option>
+            <option value="mr">मराठी</option>
             <option value="en">English</option>
           </select>
         </div>
@@ -102,7 +102,7 @@
           </select>
         </div>
         <div class="farmer-id-badge" id="current-farmer-badge">
-          <span class="farmer-avatar">ðŸ‘¤</span>
+          <span class="farmer-avatar">👤</span>
           <span id="farmer-name-display">Ramaiah (+91 94408 12345)</span>
         </div>
       </div>
@@ -114,7 +114,7 @@
           <div class="phone-header-back">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9l5 5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <div class="phone-header-avatar">ðŸŒ¾</div>
+          <div class="phone-header-avatar">🌾</div>
           <div class="phone-header-info">
             <div class="phone-contact-name">KisanAlert Bot</div>
             <div class="phone-contact-status">
@@ -123,7 +123,7 @@
             </div>
           </div>
           <div class="phone-header-actions" style="display:flex;align-items:center;gap:10px">
-            <button id="voice-call-btn" title="Simulate IVR Voice Call" onclick="triggerVoiceCall()" style="background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3);border-radius:50%;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px">ðŸ“ž</button>
+            <button id="voice-call-btn" title="Simulate IVR Voice Call" onclick="triggerVoiceCall()" style="background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3);border-radius:50%;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px">📞</button>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/><path d="M10 7v3l2 2" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round"/></svg>
           </div>
         </div>
@@ -135,9 +135,9 @@
 
         <!-- Quick actions inside phone -->
         <div class="quick-actions">
-          <button class="quick-btn" data-action="crop">ðŸŒ¾ Crop Advice</button>
-          <button class="quick-btn" data-action="weather">ðŸŒ¦ï¸ Weather Alert</button>
-          <button class="quick-btn" data-action="diagnose">ðŸ”¬ Diagnose Crop</button>
+          <button class="quick-btn" data-action="crop">🌾 Crop Advice</button>
+          <button class="quick-btn" data-action="weather">🌦️ Weather Alert</button>
+          <button class="quick-btn" data-action="diagnose">🔬 Diagnose Crop</button>
         </div>
 
         <!-- Input bar -->
@@ -173,7 +173,7 @@
 
       <div class="panel-header">
         <h2 class="panel-title" style="color: #4ade80;">
-          <span class="panel-title-icon">ðŸŒ¿</span>
+          <span class="panel-title-icon">🌿</span>
           Kisan Seva Dashboard
         </h2>
         <span class="panel-subtitle">RSK Extension Worker View</span>
@@ -182,7 +182,7 @@
       <!-- Stat Cards -->
       <div class="stat-cards-row">
         <div class="stat-card" id="stat-farmers">
-          <div class="stat-icon">ðŸ‘¨â€ðŸŒ¾</div>
+          <div class="stat-icon">👨‍🌾</div>
           <div class="stat-body">
             <div class="stat-value" data-target="2847" id="stat-val-farmers">0</div>
             <div class="stat-label">Farmers Reached</div>
@@ -190,7 +190,7 @@
           <div class="stat-trend up">+12%</div>
         </div>
         <div class="stat-card" id="stat-alerts">
-          <div class="stat-icon">ðŸ“¢</div>
+          <div class="stat-icon">📢</div>
           <div class="stat-body">
             <div class="stat-value amber" data-target="143" id="stat-val-alerts">0</div>
             <div class="stat-label">Alerts Sent Today</div>
@@ -198,7 +198,7 @@
           <div class="stat-trend up">+8%</div>
         </div>
         <div class="stat-card" id="stat-flagged">
-          <div class="stat-icon">ðŸš©</div>
+          <div class="stat-icon">🚩</div>
           <div class="stat-body">
             <div class="stat-value danger" data-target="17" id="stat-val-flagged">0</div>
             <div class="stat-label">Cases Flagged for RSK</div>
@@ -210,15 +210,15 @@
       <!-- Impact Strip -->
       <div class="impact-strip">
         <div class="impact-item">
-          <span class="impact-icon">ðŸ’°</span>
+          <span class="impact-icon">💰</span>
           <div>
-            <div class="impact-val" id="impact-loss">â‚¹2.3 Cr</div>
+            <div class="impact-val" id="impact-loss">₹2.3 Cr</div>
             <div class="impact-lbl">Crop loss prevented this season</div>
           </div>
         </div>
         <div class="impact-divider"></div>
         <div class="impact-item">
-          <span class="impact-icon">ðŸŒ¾</span>
+          <span class="impact-icon">🌾</span>
           <div>
             <div class="impact-val">14,200 ha</div>
             <div class="impact-lbl">Farmland covered</div>
@@ -226,7 +226,7 @@
         </div>
         <div class="impact-divider"></div>
         <div class="impact-item">
-          <span class="impact-icon">âš¡</span>
+          <span class="impact-icon">⚡</span>
           <div>
             <div class="impact-val">4.2 hrs</div>
             <div class="impact-lbl">Avg advisory response time</div>
@@ -234,7 +234,7 @@
         </div>
         <div class="impact-divider"></div>
         <div class="impact-item">
-          <span class="impact-icon">ðŸ“±</span>
+          <span class="impact-icon">📱</span>
           <div>
             <div class="impact-val">68%</div>
             <div class="impact-lbl">Farmers on SMS-only devices</div>
@@ -244,11 +244,11 @@
 
       <!-- Tab navigation -->
       <div class="tab-nav">
-        <button class="tab-btn active" data-tab="flagged">ðŸš© Flagged Cases</button>
-        <button class="tab-btn" data-tab="recommendations">ðŸ“‹ Recommendations</button>
-        <button class="tab-btn" data-tab="alerts">âš¡ Alerts Sent</button>
-        <button class="tab-btn" data-tab="farmers">ðŸ‘¥ Active Farmers</button>
-        <button class="tab-btn" data-tab="map">ðŸ—ºï¸ District Map</button>
+        <button class="tab-btn active" data-tab="flagged">🚩 Flagged Cases</button>
+        <button class="tab-btn" data-tab="recommendations">📋 Recommendations</button>
+        <button class="tab-btn" data-tab="alerts">⚡ Alerts Sent</button>
+        <button class="tab-btn" data-tab="farmers">👥 Active Farmers</button>
+        <button class="tab-btn" data-tab="map">🗺️ District Map</button>
       </div>
 
       <!-- Tab content panels -->
@@ -277,7 +277,7 @@
                 <option value="in_review">In Review</option>
                 <option value="resolved">Resolved</option>
               </select>
-              <button class="refresh-btn" id="refresh-cases-btn">â†» Refresh</button>
+              <button class="refresh-btn" id="refresh-cases-btn">↻ Refresh</button>
             </div>
           </div>
           <div class="table-wrapper">
@@ -324,7 +324,7 @@
             </select>
             <select id="filter-farmer-lang" class="filter-select" onchange="applyFarmerFilter()">
               <option value="">All Languages</option>
-              <option>à¤¹à¤¿à¤‚à¤¦à¥€</option><option>à°¤à±†à°²à±à°—à±</option><option>à²•à²¨à³à²¨à²¡</option><option>à¤®à¤°à¤¾à¤ à¥€</option><option>English</option>
+              <option>हिंदी</option><option>తెలుగు</option><option>ಕನ್ನಡ</option><option>मराठी</option><option>English</option>
             </select>
           </div>
           <div class="farmers-grid" id="farmers-grid"></div>
@@ -392,22 +392,22 @@
       <!-- Live update ticker -->
       <div class="live-ticker" id="live-ticker">
         <span class="ticker-dot"></span>
-        <span id="ticker-text">Live pilot: Chittoor (Andhra Pradesh) Â· 10 districts in onboarding queue</span>
+        <span id="ticker-text">Live pilot: Chittoor (Andhra Pradesh) · 10 districts in onboarding queue</span>
       </div>
 
       <!-- Tech stack footer -->
       <div class="tech-footer">
-        <span class="tech-item">âš¡ Gemini 1.5 Flash</span>
-        <span class="tech-sep">Â·</span>
-        <span class="tech-item">â˜ï¸ Google Cloud Run</span>
-        <span class="tech-sep">Â·</span>
-        <span class="tech-item">ðŸŒ¦ IMD Open Data</span>
-        <span class="tech-sep">Â·</span>
-        <span class="tech-item">ðŸ›° Open-Meteo API</span>
-        <span class="tech-sep">Â·</span>
-        <span class="tech-item">ðŸ“¡ SMS Gateway</span>
-        <span class="tech-sep">Â·</span>
-        <span class="tech-item">ðŸ—º Bhuvan Soil DB</span>
+        <span class="tech-item">⚡ Gemini 1.5 Flash</span>
+        <span class="tech-sep">·</span>
+        <span class="tech-item">☁️ Google Cloud Run</span>
+        <span class="tech-sep">·</span>
+        <span class="tech-item">🌦 IMD Open Data</span>
+        <span class="tech-sep">·</span>
+        <span class="tech-item">🛰 Open-Meteo API</span>
+        <span class="tech-sep">·</span>
+        <span class="tech-item">📡 SMS Gateway</span>
+        <span class="tech-sep">·</span>
+        <span class="tech-item">🗺 Bhuvan Soil DB</span>
       </div>
 
     </section>
@@ -419,7 +419,7 @@
     <div class="modal-box">
       <div class="modal-header">
         <h3>Crop Disease Diagnosis</h3>
-        <button class="modal-close" id="modal-close">âœ•</button>
+        <button class="modal-close" id="modal-close">✕</button>
       </div>
       <div class="modal-body">
         <img id="modal-preview-img" src="" alt="Crop preview" class="modal-img" />
@@ -428,13 +428,13 @@
           <span id="modal-filename">-</span>
         </div>
         <button class="modal-submit-btn" id="modal-diagnose-btn">
-          ðŸ”¬ Analyze with Gemini Vision
+          🔬 Analyze with Gemini Vision
         </button>
       </div>
     </div>
   </div>
 
-  <script src="js/app.js?v=12"></script>
+  <script src="js/app.js?v=13"></script>
 </body>
 </html>
 
