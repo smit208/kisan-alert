@@ -186,7 +186,7 @@ var MOCK_FARMERS = [
   { name: 'Suresh Kumar', district: 'Warangal', lang: 'हिंदी', avatar: '🧑‍🌾' },
   { name: 'Basavaraj', district: 'Bijapur', lang: 'ಕನ್ನಡ', avatar: '👴' },
   { name: 'Mangesh Patil', district: 'Nashik', lang: 'मराठी', avatar: '👨' },
-  { name: 'David Thomas', district: 'Kurnool', lang: 'English', avatar: '🧔' },
+  { name: 'Narasimha Rao', district: 'Kurnool', lang: 'తెలుగు', avatar: '🧔' },
   { name: 'Laxmi Devi', district: 'Nalgonda', lang: 'తెలుగు', avatar: '👩‍🌾' },
   { name: 'Rajendra Yadav', district: 'Madhubani', lang: 'हिंदी', avatar: '🧑' },
   { name: 'Kavitha S', district: 'Guntur', lang: 'తెలుగు', avatar: '👩' }
@@ -202,7 +202,7 @@ var MOCK_CHAT_RESPONSES = {
   default_en: `Hello! Based on your query, here's what our AI analysis suggests:\n\nFor your district and current season, we recommend focusing on soil health monitoring. Our Gemini-powered system has analyzed historical crop data for 11 districts.\n\n📊 Confidence Score: 87%\n\nWould you like a detailed recommendation with input costs?`,
   crop_advice: `🌾 **Crop Recommendation — ${nowDateStr()}**\n\nBased on soil data, rainfall forecast & MSP for your district:\n\n1. 🥇 Cotton — Suitability 88%, MSP ₹7,121\n2. 🥈 Soybean — Suitability 74%, MSP ₹4,600\n3. 🥉 Maize — Suitability 61%, Good market demand\n\n💧 Water requirement: Cotton needs 700mm/season\n📅 Best sowing window: June 15 – July 10`,
   weather_alert: `⛈️ **Weather Alert — Active**\n\nDistrict: ${currentDistrict || 'Your District'}\nIMD Forecast (next 72h):\n\n• Rainfall: 45–60mm expected\n• Max Temp: 36°C | Min: 24°C\n• Wind: NE 18 km/h\n\n⚠️ **Advisory:** Delay pesticide spray for 2 days. Ensure proper drainage in fields.\n\n🌦 Next dry window: Thursday onwards`,
-  diagnose: `🔬 **Gemini Vision Analysis Complete**\n\nCrop: Groundnut\nDisease Detected: **Leaf Spot (Cercospora arachidicola)**\nConfidence: 91%\nSeverity: MEDIUM-HIGH\n\n💊 **Treatment Protocol:**\n• Mancozeb 75 WP @ 2g/L — spray immediately\n• Remove infected leaves\n• Avoid overhead irrigation\n\n🚩 Case flagged to RSK center for field visit.`
+  diagnose: `🔬 **Gemini Vision Analysis Complete**\n\nCrop: Groundnut\nDisease Detected: **Leaf Spot (Cercospora arachidicola)**\nConfidence: 91%\nSeverity: HIGH\n\n💊 **Treatment Protocol:**\n• Mancozeb 75 WP @ 2g/L — spray immediately\n• Remove infected leaves\n• Avoid overhead irrigation\n\n🚩 Case flagged to RSK Chittoor Block 3 for field visit.`
 };
 
 // ============================================================
@@ -484,13 +484,17 @@ var CROP_EMOJI_MAP = {
 };
 
 var CROP_PHOTO_MAP = {
-  'Rice':       'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=60&h=60&fit=crop',
-  'Cotton':     'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=60&h=60&fit=crop',
+  'Rice':       'https://images.unsplash.com/photo-1536054989289-13de2f4c62e0?w=60&h=60&fit=crop',
+  'Cotton':     'https://images.unsplash.com/photo-1606914501449-5a96b6cd5e4e?w=60&h=60&fit=crop',
   'Groundnut':  'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=60&h=60&fit=crop',
-  'Chilli':     'https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?w=60&h=60&fit=crop',
+  'Chilli':     'https://images.unsplash.com/photo-1518977956812-cd3dbadaaf31?w=60&h=60&fit=crop',
   'Wheat':      'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=60&h=60&fit=crop',
-  'Soybean':    'https://images.unsplash.com/photo-1515543904379-3d757afe72e4?w=60&h=60&fit=crop',
-  'default':    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=60&h=60&fit=crop'
+  'Soybean':    'https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=60&h=60&fit=crop',
+  'Maize':      'https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=60&h=60&fit=crop',
+  'Tomato':     'https://images.unsplash.com/photo-1561136594-7f68b2709451?w=60&h=60&fit=crop',
+  'Grapes':     'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=60&h=60&fit=crop',
+  'Sugarcane':  'https://images.unsplash.com/photo-1568347877321-f8935c7dc5f0?w=60&h=60&fit=crop',
+  'default':    'https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=60&h=60&fit=crop'
 };
 
 // Normalize a case object — handles ALL possible shapes from backend + mock
@@ -866,16 +870,16 @@ function performLiveUpdate() {
   var tickerText = document.getElementById('ticker-text');
   if (tickerText) tickerText.textContent = '🔄 Fetching latest data...';
 
-  // Simulate network fetch then update
-  setTimeout(function() {
-    // Bump alerts sent counter slightly
+  // Guaranteed to resolve in 1.2s regardless of network
+  var done = false;
+  function finish() {
+    if (done) return;
+    done = true;
     var alertsEl = document.getElementById('stat-val-alerts');
     if (alertsEl) {
       var cur = parseInt(alertsEl.textContent.replace(/,/g, ''), 10) || 0;
       animateCounter(alertsEl, cur + Math.floor(Math.random() * 4 + 1));
     }
-
-    // Maybe flag a new case
     if (Math.random() > 0.6) {
       var flaggedEl = document.getElementById('stat-val-flagged');
       if (flaggedEl) {
@@ -883,12 +887,14 @@ function performLiveUpdate() {
         animateCounter(flaggedEl, fcur + 1);
       }
     }
-
-    if (tickerText) tickerText.textContent = '✅ Updated — Next refresh in 30s';
+    if (tickerText) tickerText.textContent = '✅ Updated just now';
     setTimeout(function() {
       if (tickerText) tickerText.textContent = 'Live monitoring active — Next update in 30s';
     }, 2000);
-  }, 1200);
+  }
+
+  // Always resolve within 1.5s — no way to get stuck
+  setTimeout(finish, 1500);
 }
 
 // ============================================================

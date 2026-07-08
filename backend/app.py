@@ -190,13 +190,14 @@ def get_flagged_cases():
         demo_cases = [
             {
                 "case_id": "CASE_0001",
-                "district": "Warangal",
+                "district": "Chittoor",
                 "lang": "te",
-                "crop": "Rice",
-                "disease": "Rice Blast (Pyricularia oryzae)",
-                "confidence": 0.88,
+                "crop": "Groundnut",
+                "farmer_name": "Ramaiah G.",
+                "disease": "Leaf Spot (Cercospora arachidicola)",
+                "confidence": 0.91,
                 "severity": "high",
-                "rsk": {"name": "Rythu Seva Kendra - Warangal Urban", "phone": "0870-2441234"},
+                "rsk": {"name": "Rythu Seva Kendra - Chittoor Block 3", "phone": "08572-241890"},
                 "flagged_at": "2026-07-08T06:15:00",
                 "status": "pending"
             },
@@ -205,8 +206,9 @@ def get_flagged_cases():
                 "district": "Nalgonda",
                 "lang": "te",
                 "crop": "Cotton",
+                "farmer_name": "Laxmi Devi",
                 "disease": "Cotton Leaf Curl Virus",
-                "confidence": 0.65,  # below threshold, so flagged
+                "confidence": 0.65,
                 "severity": "medium",
                 "rsk": {"name": "Rythu Seva Kendra - Nalgonda", "phone": "08682-242789"},
                 "flagged_at": "2026-07-08T07:30:00",
@@ -217,8 +219,9 @@ def get_flagged_cases():
                 "district": "Guntur",
                 "lang": "te",
                 "crop": "Chilli",
+                "farmer_name": "Kavitha S.",
                 "disease": "Anthracnose (Colletotrichum capsici)",
-                "confidence": 0.71,  # just below 0.72 threshold
+                "confidence": 0.71,
                 "severity": "medium",
                 "rsk": {"name": "Rythu Seva Kendra - Guntur", "phone": "0863-2342100"},
                 "flagged_at": "2026-07-08T08:05:00",
@@ -226,6 +229,7 @@ def get_flagged_cases():
             }
         ]
         return {"cases": demo_cases, "total": len(demo_cases)}
+
 
     return {"cases": flagged_cases, "total": len(flagged_cases)}
 
@@ -272,10 +276,27 @@ async def stt_endpoint(req: STTRequest):
     return result
 
 
-# serve frontend if it exists - for integrated deployment
-frontend_path = os.path.join(os.path.dirname(__file__), "..", "frontend")
+# serve frontend at localhost:8000
+frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
+
 if os.path.isdir(frontend_path):
-    app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+    from fastapi.responses import FileResponse as FR
+
+    @app.get("/")
+    async def root():
+        return FR(os.path.join(frontend_path, "index.html"))
+
+    @app.get("/css/{filename}")
+    async def serve_css(filename: str):
+        return FR(os.path.join(frontend_path, "css", filename))
+
+    @app.get("/js/{filename}")
+    async def serve_js(filename: str):
+        return FR(os.path.join(frontend_path, "js", filename))
+
+    @app.get("/favicon.ico")
+    async def favicon():
+        return FR(os.path.join(frontend_path, "favicon.ico")) if os.path.exists(os.path.join(frontend_path, "favicon.ico")) else {}
 
 
 if __name__ == "__main__":
