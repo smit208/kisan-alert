@@ -37,6 +37,7 @@ var MOCK_FLAGGED_CASES = [
   {
     id: 'F-0091',
     district: 'Kurnool',
+    crop: 'Groundnut',
     cropEmoji: '🥜',
     diagnosis: 'Groundnut Leaf Spot',
     severity: 'high',
@@ -46,6 +47,7 @@ var MOCK_FLAGGED_CASES = [
   {
     id: 'F-0077',
     district: 'Warangal',
+    crop: 'Cotton',
     cropEmoji: '🌿',
     diagnosis: 'Cotton Bollworm',
     severity: 'high',
@@ -55,6 +57,7 @@ var MOCK_FLAGGED_CASES = [
   {
     id: 'F-0134',
     district: 'Guntur',
+    crop: 'Chilli',
     cropEmoji: '🌶️',
     diagnosis: 'Chilli Mosaic Virus',
     severity: 'medium',
@@ -202,7 +205,7 @@ var MOCK_CHAT_RESPONSES = {
   default_en: `Hello! Based on your query, here's what our AI analysis suggests:\n\nKisanAlert is currently live in Chittoor district (Andhra Pradesh) as a pilot, with 10 more districts in the onboarding queue. Our Gemini-powered system has analyzed crop data, soil maps, and IMD weather feeds for the pilot zone.\n\nConfidence Score: 87%\n\nWould you like a detailed recommendation with input costs?`,
   crop_advice: `🌾 **Crop Recommendation - ${nowDateStr()}**\n\nBased on soil data, rainfall forecast & MSP for your district:\n\n1. 🥇 Cotton - Suitability 88%, MSP ₹7,121\n2. 🥈 Soybean - Suitability 74%, MSP ₹4,600\n3. 🥉 Maize - Suitability 61%, Good market demand\n\n💧 Water requirement: Cotton needs 700mm/season\n📅 Best sowing window: June 15 – July 10`,
   weather_alert: `⛈️ **Weather Alert - Active**\n\nDistrict: ${currentDistrict || 'Your District'}\nIMD Forecast (next 72h):\n\n• Rainfall: 45–60mm expected\n• Max Temp: 36°C | Min: 24°C\n• Wind: NE 18 km/h\n\n⚠️ **Advisory:** Delay pesticide spray for 2 days. Ensure proper drainage in fields.\n\n🌦 Next dry window: Thursday onwards`,
-  diagnose: `🔬 **Gemini Vision Analysis Complete**\n\nCrop: Groundnut\nDisease Detected: **Leaf Spot (Cercospora arachidicola)**\nConfidence: 91%\nSeverity: HIGH\n\n💊 **Treatment Protocol:**\n• Mancozeb 75 WP @ 2g/L - spray immediately\n• Remove infected leaves\n• Avoid overhead irrigation\n\n🚩 Case flagged to RSK Chittoor Block 3 for field visit.`
+  diagnose: `🔬 **Gemini Vision Analysis Complete**\n\nCrop: Groundnut\nDisease Detected: **Leaf Spot (Cercospora arachidicola)**\nConfidence: 91%\nSeverity: HIGH\n\n**Why 91%?** Matched against 40,000+ labeled images (ICAR dataset). Symptoms confirmed: circular brown lesions with yellow halo, lesion diameter 3-7mm, early-stage spread on lower canopy.\n\n💊 **Treatment Protocol:**\n• Mancozeb 75 WP @ 2g/L - spray immediately\n• Remove infected leaves\n• Avoid overhead irrigation\n\n🚩 Case flagged to RSK Chittoor Block 3 for field visit.`
 };
 
 // ============================================================
@@ -1079,6 +1082,18 @@ function performLiveUpdate() {
         animateCounter(flaggedEl, fcur + 1);
       }
     }
+    // Farmers Reached increments on every cycle (3-9 new farmers per 30s window)
+    var farmersEl = document.getElementById('stat-val-farmers');
+    if (farmersEl) {
+      var frcur = parseInt(farmersEl.textContent.replace(/,/g, ''), 10) || 0;
+      animateCounter(farmersEl, frcur + Math.floor(Math.random() * 7 + 3));
+    }
+    // Refresh freshness timestamps on all stat cards
+    var nowTs = new Date();
+    var tsStr = nowTs.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+    document.querySelectorAll('.stat-freshness').forEach(function(el) {
+      el.textContent = 'as of ' + tsStr;
+    });
     if (tickerText) tickerText.textContent = '✅ Updated just now';
     setTimeout(function() {
       if (tickerText) tickerText.textContent = 'Live monitoring active - Next update in 30s';
