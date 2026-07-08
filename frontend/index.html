@@ -24,10 +24,13 @@
       <span class="status-divider">|</span>
       <span class="status-text gemini-tag">✦ Gemini Powered</span>
       <span class="status-divider">|</span>
-      <span class="status-text" id="live-clock"></span>
+      <span class="status-text" id="live-clock">--:-- --</span>
     </div>
-    <div class="status-bar-right">
-      <span class="uptime-badge">● LIVE</span>
+    <div class="status-bar-inner" style="gap:12px">
+      <div id="connectivity-badge" class="conn-badge data-mode" onclick="toggleConnectivity()">
+        <span class="conn-dot"></span><span id="conn-label">Data Mode</span>
+      </div>
+      <div class="uptime-badge">● LIVE</div>
     </div>
   </div>
 
@@ -119,7 +122,8 @@
               Online — Gemini 1.5
             </div>
           </div>
-          <div class="phone-header-actions">
+          <div class="phone-header-actions" style="display:flex;align-items:center;gap:10px">
+            <button id="voice-call-btn" title="Simulate IVR Voice Call" onclick="triggerVoiceCall()" style="background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3);border-radius:50%;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px">📞</button>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/><path d="M10 7v3l2 2" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round"/></svg>
           </div>
         </div>
@@ -203,12 +207,48 @@
         </div>
       </div>
 
+      <!-- Impact Strip -->
+      <div class="impact-strip">
+        <div class="impact-item">
+          <span class="impact-icon">💰</span>
+          <div>
+            <div class="impact-val" id="impact-loss">₹2.3 Cr</div>
+            <div class="impact-lbl">Crop loss prevented this season</div>
+          </div>
+        </div>
+        <div class="impact-divider"></div>
+        <div class="impact-item">
+          <span class="impact-icon">🌾</span>
+          <div>
+            <div class="impact-val">14,200 ha</div>
+            <div class="impact-lbl">Farmland covered</div>
+          </div>
+        </div>
+        <div class="impact-divider"></div>
+        <div class="impact-item">
+          <span class="impact-icon">⚡</span>
+          <div>
+            <div class="impact-val">4.2 hrs</div>
+            <div class="impact-lbl">Avg advisory response time</div>
+          </div>
+        </div>
+        <div class="impact-divider"></div>
+        <div class="impact-item">
+          <span class="impact-icon">📱</span>
+          <div>
+            <div class="impact-val">68%</div>
+            <div class="impact-lbl">Farmers on SMS-only devices</div>
+          </div>
+        </div>
+      </div>
+
       <!-- Tab navigation -->
       <div class="tab-nav">
         <button class="tab-btn active" data-tab="flagged">🚩 Flagged Cases</button>
         <button class="tab-btn" data-tab="recommendations">📋 Recommendations</button>
         <button class="tab-btn" data-tab="alerts">⚡ Alerts Sent</button>
         <button class="tab-btn" data-tab="farmers">👥 Active Farmers</button>
+        <button class="tab-btn" data-tab="map">🗺️ District Map</button>
       </div>
 
       <!-- Tab content panels -->
@@ -218,13 +258,33 @@
         <div class="tab-pane active" id="tab-flagged">
           <div class="table-toolbar">
             <span class="table-title">Recent Flagged Cases</span>
-            <button class="refresh-btn" id="refresh-cases-btn">↻ Refresh</button>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select id="filter-district" class="filter-select" onchange="applyTableFilter()">
+                <option value="">All Districts</option>
+                <option>Warangal</option><option>Guntur</option><option>Nalgonda</option>
+                <option>Kurnool</option><option>Chittoor</option><option>Vidisha</option>
+                <option>Nashik</option><option>Bijapur</option><option>Solapur</option><option>Madhubani</option>
+              </select>
+              <select id="filter-severity" class="filter-select" onchange="applyTableFilter()">
+                <option value="">All Severity</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+              <select id="filter-status" class="filter-select" onchange="applyTableFilter()">
+                <option value="">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="in_review">In Review</option>
+                <option value="resolved">Resolved</option>
+              </select>
+              <button class="refresh-btn" id="refresh-cases-btn">↻ Refresh</button>
+            </div>
           </div>
           <div class="table-wrapper">
             <table class="data-table" id="flagged-table">
               <thead>
                 <tr>
-                  <th>Farmer ID</th>
+                  <th>Farmer</th>
                   <th>District</th>
                   <th>Crop Photo</th>
                   <th>Diagnosis</th>
@@ -234,9 +294,7 @@
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody id="flagged-tbody">
-                <!-- Populated by JS -->
-              </tbody>
+              <tbody id="flagged-tbody"></tbody>
             </table>
           </div>
         </div>
@@ -257,8 +315,36 @@
 
         <!-- ACTIVE FARMERS TAB -->
         <div class="tab-pane" id="tab-farmers">
-          <div class="farmers-grid" id="farmers-grid">
-            <!-- Populated by JS -->
+          <div style="padding:10px 0 8px;display:flex;gap:8px">
+            <select id="filter-farmer-district" class="filter-select" onchange="applyFarmerFilter()">
+              <option value="">All Districts</option>
+              <option>Warangal</option><option>Guntur</option><option>Nalgonda</option>
+              <option>Kurnool</option><option>Chittoor</option><option>Bijapur</option>
+              <option>Nashik</option><option>Madhubani</option>
+            </select>
+            <select id="filter-farmer-lang" class="filter-select" onchange="applyFarmerFilter()">
+              <option value="">All Languages</option>
+              <option>हिंदी</option><option>తెలుగు</option><option>ಕನ್ನಡ</option><option>मराठी</option><option>English</option>
+            </select>
+          </div>
+          <div class="farmers-grid" id="farmers-grid"></div>
+        </div>
+
+        <!-- DISTRICT MAP TAB -->
+        <div class="tab-pane" id="tab-map">
+          <div class="map-container">
+            <div class="map-legend">
+              <span class="legend-item"><span class="legend-dot high"></span>High Alert</span>
+              <span class="legend-item"><span class="legend-dot medium"></span>Medium Alert</span>
+              <span class="legend-item"><span class="legend-dot active"></span>Active</span>
+            </div>
+            <svg id="india-map" viewBox="0 0 420 520" style="width:100%;max-height:340px">
+              <!-- Simplified India outline -->
+              <path d="M120,40 L180,30 L240,35 L290,55 L320,80 L340,120 L350,160 L345,200 L360,230 L370,270 L355,310 L330,350 L300,390 L270,420 L240,450 L210,470 L190,460 L175,440 L155,410 L130,380 L110,350 L90,310 L75,270 L70,230 L80,190 L85,150 L90,110 L100,75 Z" fill="rgba(74,222,128,0.05)" stroke="rgba(74,222,128,0.2)" stroke-width="1.5"/>
+              <!-- District pins will be injected by JS -->
+              <g id="district-pins"></g>
+            </svg>
+            <div id="map-tooltip" class="map-tooltip" style="display:none"></div>
           </div>
         </div>
 
@@ -268,6 +354,21 @@
       <div class="live-ticker" id="live-ticker">
         <span class="ticker-dot"></span>
         <span id="ticker-text">Monitoring 11 districts... Next update in 30s</span>
+      </div>
+
+      <!-- Tech stack footer -->
+      <div class="tech-footer">
+        <span class="tech-item">⚡ Gemini 1.5 Flash</span>
+        <span class="tech-sep">·</span>
+        <span class="tech-item">☁️ Google Cloud Run</span>
+        <span class="tech-sep">·</span>
+        <span class="tech-item">🌦 IMD Open Data</span>
+        <span class="tech-sep">·</span>
+        <span class="tech-item">🛰 Open-Meteo API</span>
+        <span class="tech-sep">·</span>
+        <span class="tech-item">📡 SMS Gateway</span>
+        <span class="tech-sep">·</span>
+        <span class="tech-item">🗺 Bhuvan Soil DB</span>
       </div>
 
     </section>
@@ -294,6 +395,6 @@
     </div>
   </div>
 
-  <script src="js/app.js?v=6"></script>
+  <script src="js/app.js?v=7"></script>
 </body>
 </html>

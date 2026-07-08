@@ -331,30 +331,73 @@ function scrollChatToBottom() {
 function loadDemoConversation() {
   addDateSep('Today — ' + nowDateStr());
 
-  // Turn 1: Telugu message about yellowing leaves
-  addMessage('farmer', 'నా పత్తి ఆకులు పసుపు రంగుకు మారుతున్నాయి 😟', 'Ramaiah (+91 94408 12345)');
+  // Turn 1: Farmer sends Telugu message about crop issue
+  addMessage('farmer', 'నా వేరుశెనగ ఆకులపై మచ్చలు వస్తున్నాయి 😟 చాలా భయంగా ఉంది', 'Ramaiah (+91 94408 12345)');
 
   setTimeout(function() {
     addMessage('bot', MOCK_CHAT_RESPONSES.default_te, 'KisanAlert 🌿');
-  }, 600);
+  }, 700);
 
-  // Turn 2: Hindi crop advice question
+  // Turn 2: Hindi crop advice
   setTimeout(function() {
     addMessage('farmer', 'इस बार कौन सी फसल लगाऊं? मेरे पास 3 एकड़ है', 'Suresh (+91 98440 67890)');
-  }, 1200);
+  }, 1500);
 
   setTimeout(function() {
     addMessage('bot', MOCK_CHAT_RESPONSES.default_hi, 'KisanAlert 🌿');
-  }, 2000);
+  }, 2400);
 
-  // Turn 3: Disease diagnosis result
+  // Turn 3: LIVE PHOTO MOMENT — farmer sends a real crop photo
   setTimeout(function() {
-    addMessage('farmer', '🖼️ [Image Uploaded: groundnut_leaf.jpg]', 'David Thomas (+91 99400 11223)');
-  }, 2800);
+    addPhotoMessage(
+      'Ramaiah (+91 94408 12345)',
+      'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=200&h=120&fit=crop',
+      'groundnut_leaf_spot.jpg'
+    );
+  }, 3200);
 
+  // Show "Analyzing with Gemini Vision..." typing state
   setTimeout(function() {
+    var analyzeEl = addMessage('bot',
+      '🔍 Image received. Analyzing with Gemini Vision AI...',
+      'KisanAlert 🌿');
+    analyzeEl.classList.add('analyzing-pulse');
+  }, 4000);
+
+  // Final: full diagnosis result
+  setTimeout(function() {
+    // Remove analyzing message
+    var prev = chatEl.querySelector('.analyzing-pulse');
+    if (prev) prev.remove();
     addMessage('bot', MOCK_CHAT_RESPONSES.diagnose, 'KisanAlert 🌿');
-  }, 3600);
+  }, 5800);
+}
+
+// Append a farmer photo bubble to chat
+function addPhotoMessage(senderLabel, imgUrl, filename) {
+  var wrap = document.createElement('div');
+  wrap.className = 'msg-bubble farmer';
+
+  var senderEl = document.createElement('div');
+  senderEl.className = 'msg-sender';
+  senderEl.textContent = senderLabel;
+
+  var bubble = document.createElement('div');
+  bubble.className = 'chat-photo-bubble';
+  bubble.innerHTML =
+    '<img src="' + imgUrl + '" alt="Crop photo" onerror="this.src=\'https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=200&h=120&fit=crop\'">' +
+    '<div class="chat-photo-caption">📎 ' + filename + '</div>';
+
+  var timeEl = document.createElement('div');
+  timeEl.className = 'msg-time';
+  timeEl.textContent = nowTime();
+
+  wrap.appendChild(senderEl);
+  wrap.appendChild(bubble);
+  wrap.appendChild(timeEl);
+  chatEl.appendChild(wrap);
+  scrollChatToBottom();
+  return wrap;
 }
 
 // ---- Send a message (user typed or quick action) ----
@@ -774,6 +817,9 @@ function renderAlerts(alerts) {
 
 // ---- Active Farmers Tab ----
 function renderFarmers(farmers) {
+  if (farmers === MOCK_FARMERS || (_allFarmers.length === 0 && farmers.length > 0)) {
+    _allFarmers = farmers;
+  }
   var grid = document.getElementById('farmers-grid');
   grid.innerHTML = '';
 
@@ -1097,35 +1143,264 @@ document.addEventListener('DOMContentLoaded', function() {
   initSendButton();
   initQuickActions();
   initImageUpload();
+  initConnectivity();
+  initDistrictMap();
 
   // Admin panel setup
   initStatCounters();
   initTabs();
   initRefreshBtn();
 
-  // Populate admin tabs with mock data (use loadAndRender so cache is populated)
+  // Populate admin tabs
   loadAndRender(MOCK_FLAGGED_CASES);
   renderRecommendations(MOCK_RECOMMENDATIONS);
   renderAlerts(MOCK_ALERTS);
   renderFarmers(MOCK_FARMERS);
 
-  // Load demo conversation in chat (slight delay for polish)
+  // Load demo conversation (photo moment at 3.2s)
   setTimeout(loadDemoConversation, 350);
 
-  // Start the live update ticker
   startLiveTicker();
 
-  // Also try to pull real flagged cases from backend (silently falls back)
   setTimeout(function() {
     apiGet('/api/cases/flagged').then(function(data) {
-      if (data && data.cases) {
-        renderFlaggedCases(data.cases);
-      }
+      if (data && data.cases) loadAndRender(data.cases);
     });
     apiGet('/api/messages').then(function(data) {
-      if (data && data.alerts) {
-        renderAlerts(data.alerts);
-      }
+      if (data && data.alerts) renderAlerts(data.alerts);
     });
   }, 2000);
 });
+
+// ============================================================
+//  CONNECTIVITY TOGGLE
+// ============================================================
+var _connMode = 'data';
+function initConnectivity() {
+  // read badge and set initial state
+  var badge = document.getElementById('connectivity-badge');
+  if (badge) badge.title = 'Click to toggle SMS/Data mode';
+}
+function toggleConnectivity() {
+  _connMode = _connMode === 'data' ? 'sms' : 'data';
+  var badge  = document.getElementById('connectivity-badge');
+  var label  = document.getElementById('conn-label');
+  if (!badge || !label) return;
+  if (_connMode === 'sms') {
+    badge.className = 'conn-badge sms-mode';
+    label.textContent = 'SMS Fallback';
+    // Show a toast-style message in chat
+    if (chatEl) {
+      var note = document.createElement('div');
+      note.style.cssText = 'text-align:center;font-size:11px;color:#f59e0b;padding:6px;margin:4px 0;background:rgba(245,158,11,0.1);border-radius:8px;border:1px solid rgba(245,158,11,0.2)';
+      note.textContent = '⚠️ Low connectivity — switching to SMS fallback mode';
+      chatEl.appendChild(note);
+      scrollChatToBottom();
+    }
+  } else {
+    badge.className = 'conn-badge data-mode';
+    label.textContent = 'Data Mode';
+    if (chatEl) {
+      var note2 = document.createElement('div');
+      note2.style.cssText = 'text-align:center;font-size:11px;color:#4ade80;padding:6px;margin:4px 0;background:rgba(74,222,128,0.08);border-radius:8px;border:1px solid rgba(74,222,128,0.15)';
+      note2.textContent = '✅ Data connection restored — switching back to full mode';
+      chatEl.appendChild(note2);
+      scrollChatToBottom();
+    }
+  }
+}
+
+// ============================================================
+//  VOICE CALL / IVR SIMULATION
+// ============================================================
+function triggerVoiceCall() {
+  var farmer = currentFarmer || { name: 'Ramaiah', phone: '+91 94408 12345' };
+
+  var overlay = document.createElement('div');
+  overlay.className = 'voice-call-overlay';
+  overlay.id = 'voice-call-overlay';
+
+  overlay.innerHTML =
+    '<div class="voice-call-card">' +
+      '<div class="call-avatar">👨‍🌾</div>' +
+      '<div class="call-name">' + farmer.name + '</div>' +
+      '<div class="call-sub" id="call-status">' + farmer.phone + ' · Incoming IVR Call</div>' +
+      '<div class="waveform" id="call-waveform" style="display:none">' +
+        '<div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>' +
+        '<div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>' +
+        '<div class="wave-bar"></div>' +
+      '</div>' +
+      '<div class="call-transcript" id="call-transcript"></div>' +
+      '<div class="call-actions">' +
+        '<button class="call-btn accept" onclick="acceptCall()" id="call-accept">📞</button>' +
+        '<button class="call-btn decline" onclick="endCall()">📵</button>' +
+      '</div>' +
+    '</div>';
+
+  document.body.appendChild(overlay);
+}
+
+function acceptCall() {
+  var status     = document.getElementById('call-status');
+  var waveform   = document.getElementById('call-waveform');
+  var transcript = document.getElementById('call-transcript');
+  var acceptBtn  = document.getElementById('call-accept');
+  if (acceptBtn) acceptBtn.style.display = 'none';
+
+  if (status) status.textContent = 'Connected · Listening...';
+  if (waveform) waveform.style.display = 'flex';
+
+  // Simulated IVR voice transcript appears word by word
+  var voiceText = '"నా పొలంలో వేరుశెనగ ఆకులు పసుపు పడుతున్నాయి. ఏమి చేయాలో చెప్పండి."\n\n' +
+                  '[Transcribed] Leaf yellowing in groundnut crop. Requesting diagnosis and treatment advice.';
+
+  setTimeout(function() {
+    if (transcript) {
+      transcript.style.display = 'block';
+      transcript.innerHTML = '<span style="color:#4ade80;font-size:10px;display:block;margin-bottom:4px">🎙 VOICE TRANSCRIPT</span>';
+      var words = voiceText.split(' ');
+      var i = 0;
+      var interval = setInterval(function() {
+        if (i < words.length) {
+          transcript.innerHTML += words[i] + ' ';
+          i++;
+          scrollChatToBottom();
+        } else {
+          clearInterval(interval);
+          // Auto-respond after transcript completes
+          setTimeout(function() {
+            endCall();
+            addMessage('farmer', '📞 [Voice Call] ' + voiceText.split('\n')[0], currentFarmer.name);
+            var typing = showTyping();
+            setTimeout(function() {
+              removeTyping();
+              addMessage('bot',
+                'నమస్కారం! మీ వేరుశెనగ ఆకుల సమస్య అర్థమైంది.\n\n' +
+                '• ఆకు మచ్చ వ్యాధి (Cercospora) అయి ఉండవచ్చు\n' +
+                '• Mancozeb 75 WP @ 2g/L పిచికారీ చేయండి\n' +
+                '• RSK Chittoor అధికారి మీకు 24 గంటల్లో సంప్రదిస్తారు',
+                'KisanAlert 🌿');
+            }, 2000);
+          }, 1500);
+        }
+      }, 80);
+    }
+  }, 1200);
+}
+
+function endCall() {
+  var overlay = document.getElementById('voice-call-overlay');
+  if (overlay) overlay.remove();
+}
+
+// ============================================================
+//  DISTRICT MAP
+// ============================================================
+var DISTRICT_PINS = [
+  { name: 'Madhubani',  x: 265, y: 115, severity: 'active',  alerts: 3,  crop: 'Wheat' },
+  { name: 'Vidisha',   x: 210, y: 195, severity: 'medium',  alerts: 7,  crop: 'Soybean' },
+  { name: 'Nashik',    x: 140, y: 240, severity: 'active',  alerts: 4,  crop: 'Grapes' },
+  { name: 'Solapur',   x: 155, y: 275, severity: 'medium',  alerts: 5,  crop: 'Jowar' },
+  { name: 'Bijapur',   x: 160, y: 315, severity: 'active',  alerts: 2,  crop: 'Maize' },
+  { name: 'Warangal',  x: 240, y: 285, severity: 'medium',  alerts: 8,  crop: 'Cotton' },
+  { name: 'Nalgonda',  x: 230, y: 305, severity: 'medium',  alerts: 6,  crop: 'Cotton' },
+  { name: 'Kurnool',   x: 210, y: 330, severity: 'medium',  alerts: 9,  crop: 'Groundnut' },
+  { name: 'Guntur',    x: 245, y: 340, severity: 'medium',  alerts: 11, crop: 'Chilli' },
+  { name: 'Chittoor',  x: 225, y: 375, severity: 'high',    alerts: 14, crop: 'Groundnut' }
+];
+
+function initDistrictMap() {
+  var g = document.getElementById('district-pins');
+  var tooltip = document.getElementById('map-tooltip');
+  if (!g) return;
+
+  var colors = { high: '#ef4444', medium: '#f59e0b', active: '#4ade80' };
+
+  DISTRICT_PINS.forEach(function(d) {
+    var color = colors[d.severity] || '#4ade80';
+    var group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    group.setAttribute('class', 'district-pin');
+    group.setAttribute('transform', 'translate(' + d.x + ',' + d.y + ')');
+
+    // Pulse ring
+    var ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    ring.setAttribute('r', '14'); ring.setAttribute('fill', color); ring.setAttribute('opacity', '0.15');
+
+    // Main dot
+    var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('r', '7'); dot.setAttribute('fill', color); dot.setAttribute('stroke', '#0a0f0a'); dot.setAttribute('stroke-width', '2');
+
+    // Label
+    var label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    label.setAttribute('y', '22'); label.setAttribute('text-anchor', 'middle');
+    label.setAttribute('font-size', '8'); label.setAttribute('fill', 'rgba(232,245,233,0.7)');
+    label.setAttribute('font-family', 'Inter, sans-serif');
+    label.textContent = d.name;
+
+    group.appendChild(ring); group.appendChild(dot); group.appendChild(label);
+
+    // Tooltip on hover
+    group.addEventListener('mouseenter', function(e) {
+      if (!tooltip) return;
+      var sevLabel = d.severity === 'high' ? '🔴 HIGH' : d.severity === 'medium' ? '🟡 MEDIUM' : '🟢 ACTIVE';
+      tooltip.innerHTML =
+        '<strong style="color:#4ade80">' + d.name + '</strong><br>' +
+        'Main Crop: ' + d.crop + '<br>' +
+        'Alerts Today: <strong>' + d.alerts + '</strong><br>' +
+        'Status: ' + sevLabel;
+      tooltip.style.display = 'block';
+      tooltip.style.left = (d.x + 20) + 'px';
+      tooltip.style.top  = (d.y - 10) + 'px';
+    });
+    group.addEventListener('mouseleave', function() {
+      if (tooltip) tooltip.style.display = 'none';
+    });
+
+    g.appendChild(group);
+  });
+}
+
+// ============================================================
+//  TABLE FILTERS
+// ============================================================
+var _allNormalizedCases = [];
+
+// Override loadAndRender to also store for filtering
+var _origLoadAndRender = loadAndRender;
+function loadAndRender(rawList) {
+  _casesCache = {};
+  var normalized = rawList.map(function(raw, idx) {
+    if (!raw.case_id && !raw.id) raw._idx = idx;
+    var n = normalizeCase(raw, idx);
+    _casesCache[n.id] = n;
+    return n;
+  });
+  _allNormalizedCases = normalized;
+  renderFlaggedCases(normalized);
+}
+
+function applyTableFilter() {
+  var dist = (document.getElementById('filter-district')  || {}).value || '';
+  var sev  = (document.getElementById('filter-severity')  || {}).value || '';
+  var stat = (document.getElementById('filter-status')    || {}).value || '';
+
+  var filtered = _allNormalizedCases.filter(function(c) {
+    if (dist && c.district !== dist) return false;
+    if (sev  && c.severity !== sev)  return false;
+    if (stat && c.status.replace(' ','_') !== stat) return false;
+    return true;
+  });
+  renderFlaggedCases(filtered);
+}
+
+var _allFarmers = [];
+function applyFarmerFilter() {
+  var dist = (document.getElementById('filter-farmer-district') || {}).value || '';
+  var lang = (document.getElementById('filter-farmer-lang')     || {}).value || '';
+  var filtered = _allFarmers.filter(function(f) {
+    if (dist && f.district !== dist) return false;
+    if (lang && f.lang !== lang)     return false;
+    return true;
+  });
+  renderFarmers(filtered);
+}
