@@ -496,7 +496,8 @@ var CROP_PHOTO_MAP = {
 // Normalize a case object — handles ALL possible shapes from backend + mock
 // Backend actual fields: case_id, disease, rsk (obj {name,phone}), crop, no farmer_name
 // Mock fields: id, diagnosis, rsk (string), cropEmoji
-function normalizeCase(c) {
+// idx is used to generate a stable deterministic ID when no ID field exists
+function normalizeCase(c, idx) {
   // farmer display — backend has no farmer_name, use district + case ID
   var farmerName = c.farmer_name || c.farmer || '';
   var farmerPhone = (c.farmer_id && c.farmer_id.startsWith('+')) ? c.farmer_id : '';
@@ -537,8 +538,8 @@ function normalizeCase(c) {
   var photoUrl = CROP_PHOTO_MAP[cropKey] || CROP_PHOTO_MAP['default'];
   var emoji = CROP_EMOJI_MAP[cropKey] || c.cropEmoji || '🌿';
 
-  // ID — backend uses case_id, mock uses id
-  var caseId = c.case_id || c.id || ('CASE-' + Math.random().toString(36).substr(2,4).toUpperCase());
+  // ID — backend uses case_id, mock uses id, fallback uses stable index
+  var caseId = c.case_id || c.id || ('CASE-' + String(idx !== undefined ? idx : Math.floor(Math.random()*9000+1000)).padStart(4,'0'));
 
   return {
     _raw: c,
@@ -561,6 +562,19 @@ function normalizeCase(c) {
 }
 
 // ---- Flagged Cases Table ----
+// Always normalize ONCE, cache by ID, then render from normalized list
+function loadAndRender(rawList) {
+  _casesCache = {};
+  var normalized = rawList.map(function(raw, idx) {
+    // Give each a stable index-based ID if none exists
+    if (!raw.case_id && !raw.id) raw._idx = idx;
+    var n = normalizeCase(raw, idx);
+    _casesCache[n.id] = n;
+    return n;
+  });
+  renderFlaggedCases(normalized);
+}
+
 function renderFlaggedCases(cases) {
   var tbody = document.getElementById('flagged-tbody');
   tbody.innerHTML = '';
@@ -570,8 +584,11 @@ function renderFlaggedCases(cases) {
     return;
   }
 
-  cases.forEach(function(rawCase, idx) {
-    var c = normalizeCase(rawCase);
+  cases.forEach(function(c, idx) {
+    // c is already normalized — use directly, no second normalizeCase call
+    var isNorm = !!c.farmerDisplay;
+    if (!isNorm) c = normalizeCase(c, idx);
+
     var tr = document.createElement('tr');
     tr.style.animationDelay = (idx * 0.05) + 's';
     tr.setAttribute('data-case-id', c.id);
@@ -582,7 +599,6 @@ function renderFlaggedCases(cases) {
 
     var statusPill = '<span class="status-pill ' + c.status + '">' + c.status.replace('_', ' ') + '</span>';
 
-    // Crop Photo — real thumbnail with emoji fallback
     var photoCell = '<div class="crop-thumb-wrap" title="' + (c.cropKey || 'Crop') + '">' +
       '<img src="' + c.photoUrl + '" alt="' + (c.cropKey || 'crop') + '" ' +
       'style="width:40px;height:40px;border-radius:8px;object-fit:cover;border:1px solid rgba(255,255,255,0.1)" ' +
@@ -590,11 +606,8 @@ function renderFlaggedCases(cases) {
       '<span style="display:none;font-size:22px">' + c.emoji + '</span>' +
       '</div>';
 
-    // Farmer ID column — name + masked phone
-    var farmerCell = c.farmerDisplay;
-
     tr.innerHTML =
-      '<td style="font-size:12px">' + farmerCell + '</td>' +
+      '<td style="font-size:12px">' + c.farmerDisplay + '</td>' +
       '<td>' + c.district + '</td>' +
       '<td>' + photoCell + '</td>' +
       '<td style="max-width:140px;white-space:normal;font-size:12px">' + c.diagnosis + '</td>' +
@@ -613,13 +626,7 @@ var _casesCache = {};
 async function loadFlaggedCases() {
   var data = await apiGet('/api/cases/flagged');
   var raw = (data && data.cases && data.cases.length) ? data.cases : MOCK_FLAGGED_CASES;
-  // cache normalized cases by id
-  _casesCache = {};
-  raw.forEach(function(c) {
-    var n = normalizeCase(c);
-    _casesCache[n.id] = n;
-  });
-  renderFlaggedCases(raw);
+  loadAndRender(raw);
 }
 
 function openCase(id) {
@@ -1090,8 +1097,8 @@ document.addEventListener('DOMContentLoaded', function() {
   initTabs();
   initRefreshBtn();
 
-  // Populate admin tabs with mock data
-  renderFlaggedCases(MOCK_FLAGGED_CASES);
+  // Populate admin tabs with mock data (use loadAndRender so cache is populated)
+  loadAndRender(MOCK_FLAGGED_CASES);
   renderRecommendations(MOCK_RECOMMENDATIONS);
   renderAlerts(MOCK_ALERTS);
   renderFarmers(MOCK_FARMERS);
