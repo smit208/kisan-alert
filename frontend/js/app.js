@@ -86,54 +86,54 @@ var MOCK_RECOMMENDATIONS = [
     district: 'Warangal',
     count: 14,
     crops: [
-      { name: 'Cotton', score: 88 },
-      { name: 'Soybean', score: 74 },
-      { name: 'Maize', score: 61 }
+      { name: 'Cotton',  score: 88, soil: { ph: 7.1, moisture: 48, ndvi: 0.62, rain30d:  94, gw:  7.2 } },
+      { name: 'Soybean', score: 74, soil: { ph: 6.8, moisture: 41, ndvi: 0.55, rain30d:  94, gw:  7.2 } },
+      { name: 'Maize',   score: 61, soil: { ph: 6.5, moisture: 36, ndvi: 0.48, rain30d:  94, gw:  7.2 } }
     ]
   },
   {
     district: 'Guntur',
     count: 9,
     crops: [
-      { name: 'Chilli', score: 91 },
-      { name: 'Tobacco', score: 65 },
-      { name: 'Groundnut', score: 58 }
+      { name: 'Chilli',    score: 91, soil: { ph: 6.4, moisture: 39, ndvi: 0.71, rain30d:  78, gw:  9.1 } },
+      { name: 'Tobacco',   score: 65, soil: { ph: 6.2, moisture: 34, ndvi: 0.52, rain30d:  78, gw:  9.1 } },
+      { name: 'Groundnut', score: 58, soil: { ph: 6.0, moisture: 31, ndvi: 0.44, rain30d:  78, gw:  9.1 } }
     ]
   },
   {
     district: 'Kurnool',
     count: 11,
     crops: [
-      { name: 'Groundnut', score: 84 },
-      { name: 'Sunflower', score: 72 },
-      { name: 'Cotton', score: 55 }
+      { name: 'Groundnut', score: 84, soil: { ph: 7.3, moisture: 43, ndvi: 0.59, rain30d:  62, gw: 11.4 } },
+      { name: 'Sunflower', score: 72, soil: { ph: 7.1, moisture: 38, ndvi: 0.50, rain30d:  62, gw: 11.4 } },
+      { name: 'Cotton',    score: 55, soil: { ph: 6.9, moisture: 33, ndvi: 0.41, rain30d:  62, gw: 11.4 } }
     ]
   },
   {
     district: 'Nashik',
     count: 8,
     crops: [
-      { name: 'Grapes', score: 89 },
-      { name: 'Onion', score: 77 },
-      { name: 'Wheat', score: 49 }
+      { name: 'Grapes', score: 89, soil: { ph: 6.5, moisture: 52, ndvi: 0.68, rain30d: 112, gw:  5.8 } },
+      { name: 'Onion',  score: 77, soil: { ph: 6.3, moisture: 44, ndvi: 0.57, rain30d: 112, gw:  5.8 } },
+      { name: 'Wheat',  score: 49, soil: { ph: 6.1, moisture: 38, ndvi: 0.39, rain30d: 112, gw:  5.8 } }
     ]
   },
   {
     district: 'Vidisha',
     count: 7,
     crops: [
-      { name: 'Wheat', score: 86 },
-      { name: 'Chickpea', score: 73 },
-      { name: 'Mustard', score: 68 }
+      { name: 'Wheat',    score: 86, soil: { ph: 7.8, moisture: 46, ndvi: 0.64, rain30d:  58, gw: 14.2 } },
+      { name: 'Chickpea', score: 73, soil: { ph: 7.5, moisture: 39, ndvi: 0.54, rain30d:  58, gw: 14.2 } },
+      { name: 'Mustard',  score: 68, soil: { ph: 7.2, moisture: 35, ndvi: 0.49, rain30d:  58, gw: 14.2 } }
     ]
   },
   {
     district: 'Bijapur',
     count: 5,
     crops: [
-      { name: 'Jowar', score: 79 },
-      { name: 'Sunflower', score: 62 },
-      { name: 'Cotton', score: 54 }
+      { name: 'Jowar',     score: 79, soil: { ph: 7.6, moisture: 37, ndvi: 0.56, rain30d:  71, gw: 12.3 } },
+      { name: 'Sunflower', score: 62, soil: { ph: 7.4, moisture: 32, ndvi: 0.45, rain30d:  71, gw: 12.3 } },
+      { name: 'Cotton',    score: 54, soil: { ph: 7.1, moisture: 28, ndvi: 0.38, rain30d:  71, gw: 12.3 } }
     ]
   }
 ];
@@ -281,9 +281,26 @@ function addMessage(role, text, senderLabel) {
   wrap.appendChild(contentEl);
   wrap.appendChild(timeEl);
 
+  // Feedback row on bot messages only
+  if (role === 'bot') {
+    var fbRow = document.createElement('div');
+    fbRow.className = 'msg-feedback';
+    fbRow.innerHTML =
+      '<button class="fb-btn" onclick="logFeedback(this,true)">&#128077; Helped</button>' +
+      '<button class="fb-btn" onclick="logFeedback(this,false)">&#128078; Didn\'t help</button>';
+    wrap.appendChild(fbRow);
+  }
+
   chatEl.appendChild(wrap);
   scrollChatToBottom();
   return wrap;
+}
+
+function logFeedback(btn, positive) {
+  var row = btn.parentElement;
+  row.innerHTML = positive
+    ? '<span style="color:#4ade80;font-size:11px">&#128077; Feedback logged - thank you!</span>'
+    : '<span style="color:#f59e0b;font-size:11px">&#128078; Noted - we\'ll improve this response.</span>';
 }
 
 // Very simple text formatter - bold, line breaks, bullets
@@ -331,46 +348,51 @@ function scrollChatToBottom() {
 function loadDemoConversation() {
   addDateSep('Today - ' + nowDateStr());
 
-  // Turn 1: Farmer sends Telugu message about crop issue
-  addMessage('farmer', 'నా వేరుశెనగ ఆకులపై మచ్చలు వస్తున్నాయి 😟 చాలా భయంగా ఉంది', 'Ramaiah (+91 94408 12345)');
+  // Returning-farmer memory: bot follows up proactively
+  addMessage('bot',
+    'Welcome back, Ramaiah! Following up on the groundnut leaf spot case we flagged last week - has the condition improved after the Mancozeb spray? RSK Chittoor Block 3 is also scheduled to visit your field today.',
+    'KisanAlert 🌿');
+
+  // Farmer confirms partial improvement
+  setTimeout(function() {
+    addMessage('farmer', 'హా, కొంచెం తగ్గింది. కానీ మళ్ళీ కొత్త మచ్చలు వస్తున్నాయి 😟', 'Ramaiah (+91 94408 12345)');
+  }, 1000);
 
   setTimeout(function() {
     addMessage('bot', MOCK_CHAT_RESPONSES.default_te, 'KisanAlert 🌿');
-  }, 700);
+  }, 2000);
 
-  // Turn 2: Hindi crop advice
+  // Turn 2: Hindi crop advice (different farmer)
   setTimeout(function() {
     addMessage('farmer', 'इस बार कौन सी फसल लगाऊं? मेरे पास 3 एकड़ है', 'Suresh (+91 98440 67890)');
-  }, 1500);
+  }, 3200);
 
   setTimeout(function() {
     addMessage('bot', MOCK_CHAT_RESPONSES.default_hi, 'KisanAlert 🌿');
-  }, 2400);
+  }, 4200);
 
-  // Turn 3: LIVE PHOTO MOMENT - farmer sends a real crop photo
+  // Turn 3: LIVE PHOTO MOMENT - Ramaiah sends updated crop photo
   setTimeout(function() {
     addPhotoMessage(
       'Ramaiah (+91 94408 12345)',
-      'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=200&h=120&fit=crop',
-      'groundnut_leaf_spot.jpg'
+      'img/groundnut_leaf_spot.png',
+      'groundnut_new_spots.jpg'
     );
-  }, 3200);
+  }, 5400);
 
-  // Show "Analyzing with Gemini Vision..." typing state
   setTimeout(function() {
     var analyzeEl = addMessage('bot',
       '🔍 Image received. Analyzing with Gemini Vision AI...',
       'KisanAlert 🌿');
     analyzeEl.classList.add('analyzing-pulse');
-  }, 4000);
+  }, 6200);
 
-  // Final: full diagnosis result
+  // Final diagnosis
   setTimeout(function() {
-    // Remove analyzing message
     var prev = chatEl.querySelector('.analyzing-pulse');
     if (prev) prev.remove();
     addMessage('bot', MOCK_CHAT_RESPONSES.diagnose, 'KisanAlert 🌿');
-  }, 5800);
+  }, 8000);
 }
 
 // Append a farmer photo bubble to chat
@@ -633,8 +655,18 @@ function renderFlaggedCases(cases) {
     return;
   }
 
+  var SLA_OWNERS = {
+    'Chittoor': { name: 'K. Raju (ADA)',       ago: '2h ago' },
+    'Guntur':   { name: 'P. Srinivas (VEO)',   ago: '4h ago' },
+    'Nalgonda': { name: 'B. Reddy (ADA)',       ago: '6h ago' },
+    'Kurnool':  { name: 'S. Kumar (VEO)',       ago: '1h ago' },
+    'Warangal': { name: 'R. Naik (ADA)',        ago: '3h ago' },
+    'Nashik':   { name: 'D. Patil (KVK)',       ago: '5h ago' },
+    'Vidisha':  { name: 'A. Sharma (ADO)',      ago: '7h ago' },
+    'Bijapur':  { name: 'M. Kulkarni (ADA)',    ago: '3h ago' }
+  };
+
   cases.forEach(function(c, idx) {
-    // c is already normalized - use directly, no second normalizeCase call
     var isNorm = !!c.farmerDisplay;
     if (!isNorm) c = normalizeCase(c, idx);
 
@@ -646,7 +678,9 @@ function renderFlaggedCases(cases) {
       '<span class="badge-dot"></span>' +
       c.severity.toUpperCase() + '</span>';
 
-    var statusPill = '<span class="status-pill ' + c.status + '">' + c.status.replace('_', ' ') + '</span>';
+    var sla = SLA_OWNERS[c.district] || { name: 'Unassigned', ago: '' };
+    var statusPill = '<span class="status-pill ' + c.status + '">' + c.status.replace('_', ' ') + '</span>' +
+      '<div style="font-size:10px;color:rgba(232,245,233,0.4);margin-top:3px;line-height:1.4">&#128100; ' + sla.name + '<br>&#128336; ' + sla.ago + '</div>';
 
     var photoCell = '<div class="crop-thumb-wrap" title="' + (c.cropKey || 'Crop') + '">' +
       '<img src="' + c.photoUrl + '" alt="' + (c.cropKey || 'crop') + '" ' +
@@ -766,6 +800,20 @@ function initTabs() {
   });
 }
 
+// NDVI sparkline - 7-point Sentinel-2 trend
+function makeTrendSVG(ndvi) {
+  var pts = [], w = 64, h = 20;
+  for (var i = 0; i < 7; i++) {
+    var v = Math.min(0.95, Math.max(0.1, ndvi + Math.sin(i * 0.9) * 0.05 + (i === 6 ? 0.02 : 0)));
+    pts.push(Math.round(i / 6 * w) + ',' + Math.round(h - v * h));
+  }
+  var lp = pts[6].split(',');
+  return '<svg width="' + w + '" height="' + h + '" style="display:block;margin:3px 0">' +
+    '<polyline points="' + pts.join(' ') + '" fill="none" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<circle cx="' + lp[0] + '" cy="' + lp[1] + '" r="2.5" fill="#4ade80"/>' +
+    '</svg>';
+}
+
 // ---- Recommendations Tab ----
 function renderRecommendations(recs) {
   var grid = document.getElementById('rec-grid');
@@ -786,17 +834,37 @@ function renderRecommendations(recs) {
     var cropsHtml = rec.crops.map(function(c, ci) {
       // Width is proportional relative to the top crop - not just raw %
       // This makes the visual difference obvious even when scores are 88/74/61
-      var barWidth = Math.round((c.score / maxScore) * 100);
-      var color = rankColors[ci] || '#4ade80';
-      var rank  = rankLabels[ci] || '';
+      var barWidth  = Math.round((c.score / maxScore) * 100);
+      var bandColor = c.score >= 80 ? '#4ade80' : c.score >= 60 ? '#f59e0b' : '#ef4444';
+      var rankColor = rankColors[ci] || '#4ade80';
+      var rank      = rankLabels[ci] || '';
+      var uid       = 'soil-' + rec.district.replace(/\s/g,'') + '-' + ci;
+      var soilPanel = '';
+      if (c.soil) {
+        var s = c.soil;
+        var phOk = (s.ph >= 6.0 && s.ph <= 7.5) ? '#4ade80' : '#f59e0b';
+        soilPanel =
+          '<div class="soil-panel" id="' + uid + '" style="display:none">' +
+            '<div class="soil-grid">' +
+              '<div class="soil-item"><span class="soil-label">Soil pH</span><span class="soil-val" style="color:' + phOk + '">' + s.ph + '</span></div>' +
+              '<div class="soil-item"><span class="soil-label">Moisture</span><span class="soil-val">' + s.moisture + '%</span></div>' +
+              '<div class="soil-item"><span class="soil-label">Groundwater</span><span class="soil-val">' + s.gw + 'm</span></div>' +
+              '<div class="soil-item"><span class="soil-label">Rain 30d</span><span class="soil-val">' + s.rain30d + 'mm</span></div>' +
+            '</div>' +
+            '<div style="margin-top:5px"><span class="soil-label">NDVI Trend (Sentinel-2)</span>' +
+              makeTrendSVG(s.ndvi) +
+              '<span style="font-size:9px;color:rgba(74,222,128,0.55)">NDVI ' + s.ndvi + ' - healthy density</span>' +
+            '</div>' +
+            '<div style="font-size:9px;color:rgba(232,245,233,0.3);margin-top:3px">Sources: ICAR Soil DB · ISRO Bhuvan · IMD API</div>' +
+          '</div>';
+      }
       return '<div class="rec-crop-row">' +
-        '<span class="rec-rank-badge" style="color:' + color + ';font-size:10px;font-weight:700;width:18px;flex-shrink:0">' + rank + '</span>' +
+        '<span class="rec-rank-badge" style="color:' + rankColor + ';font-size:10px;font-weight:700;width:18px;flex-shrink:0">' + rank + '</span>' +
         '<span class="rec-crop-name">' + c.name + '</span>' +
-        '<div class="rec-score-bar">' +
-          '<div class="rec-score-fill" style="width:' + barWidth + '%;background:' + color + '"></div>' +
-        '</div>' +
-        '<span style="font-size:10px;color:rgba(232,245,233,0.6);flex-shrink:0;width:30px;text-align:right">' + c.score + '%</span>' +
-      '</div>';
+        '<div class="rec-score-bar"><div class="rec-score-fill" style="width:' + barWidth + '%;background:' + bandColor + '"></div></div>' +
+        '<span style="font-size:10px;color:' + bandColor + ';flex-shrink:0;width:28px;text-align:right;font-weight:600">' + c.score + '%</span>' +
+        (c.soil ? '<button class="why-btn" onclick="var e=document.getElementById(\'' + uid + '\');e.style.display=e.style.display===\'none\'?\'block\':\'none\'">Why?</button>' : '') +
+      '</div>' + soilPanel;
     }).join('');
 
     card.innerHTML = '<div class="rec-card-header">' +
@@ -813,6 +881,18 @@ function renderRecommendations(recs) {
 function renderAlerts(alerts) {
   var list = document.getElementById('alerts-list');
   list.innerHTML = '';
+
+  // Pinned closed-loop feedback item
+  var fbEl = document.createElement('div');
+  fbEl.className = 'alert-item';
+  fbEl.innerHTML =
+    '<div class="alert-icon-wrap" style="background:rgba(74,222,128,0.1);border-color:rgba(74,222,128,0.3)">&#128077;</div>' +
+    '<div class="alert-body">' +
+    '<div class="alert-title" style="color:#4ade80">Farmer Feedback - Chittoor (Advisory Effective)</div>' +
+    '<div class="alert-meta"><span class="alert-district-tag">&#128205; Chittoor</span><span>&#128336; Yesterday 4:22 PM</span></div>' +
+    '<div style="font-size:11px;color:rgba(232,245,233,0.6);margin-top:4px">Ramaiah G. confirmed: Mancozeb spray reduced leaf spot ~70%. Crop loss prevented: <strong style="color:#4ade80">&#8377;4,200</strong>. Outcome logged.</div>' +
+    '</div>';
+  list.appendChild(fbEl);
 
   alerts.forEach(function(a, idx) {
     var item = document.createElement('div');
@@ -1255,11 +1335,13 @@ function toggleConnectivity() {
   if (_connMode === 'sms') {
     badge.className = 'conn-badge sms-mode';
     label.textContent = 'SMS Fallback';
-    // Show a toast-style message in chat
     if (chatEl) {
+      chatEl.classList.add('sms-mode');
+      var inp = document.getElementById('chat-input');
+      if (inp) { inp.placeholder = 'Type SMS (160 chars max)...'; inp.maxLength = 160; }
       var note = document.createElement('div');
-      note.style.cssText = 'text-align:center;font-size:11px;color:#f59e0b;padding:6px;margin:4px 0;background:rgba(245,158,11,0.1);border-radius:8px;border:1px solid rgba(245,158,11,0.2)';
-      note.textContent = '⚠️ Low connectivity - switching to SMS fallback mode';
+      note.style.cssText = 'text-align:center;font-size:11px;color:#f59e0b;padding:6px 10px;margin:6px 0;background:rgba(245,158,11,0.1);border-radius:8px;border:1px solid rgba(245,158,11,0.2)';
+      note.innerHTML = '&#9888; Low connectivity - <strong>SMS Fallback mode</strong> active. Rich media disabled.';
       chatEl.appendChild(note);
       scrollChatToBottom();
     }
@@ -1267,9 +1349,12 @@ function toggleConnectivity() {
     badge.className = 'conn-badge data-mode';
     label.textContent = 'Data Mode';
     if (chatEl) {
+      chatEl.classList.remove('sms-mode');
+      var inp2 = document.getElementById('chat-input');
+      if (inp2) { inp2.placeholder = 'Type in Telugu, Hindi, or English...'; inp2.removeAttribute('maxLength'); }
       var note2 = document.createElement('div');
-      note2.style.cssText = 'text-align:center;font-size:11px;color:#4ade80;padding:6px;margin:4px 0;background:rgba(74,222,128,0.08);border-radius:8px;border:1px solid rgba(74,222,128,0.15)';
-      note2.textContent = '✅ Data connection restored - switching back to full mode';
+      note2.style.cssText = 'text-align:center;font-size:11px;color:#4ade80;padding:6px 10px;margin:6px 0;background:rgba(74,222,128,0.08);border-radius:8px;border:1px solid rgba(74,222,128,0.15)';
+      note2.innerHTML = '&#9989; Data connection restored - <strong>full mode</strong> active.';
       chatEl.appendChild(note2);
       scrollChatToBottom();
     }

@@ -1742,3 +1742,101 @@ body {
   width: 80px !important;
   flex-shrink: 0;
 }
+
+/* =====================================================
+   NEW FEATURE STYLES - v12 additions
+   ===================================================== */
+
+/* -- Why? button on recommendation rows -- */
+.why-btn {
+  background: rgba(74,222,128,0.1);
+  border: 1px solid rgba(74,222,128,0.3);
+  color: #4ade80;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: 4px;
+  transition: background 0.2s, transform 0.1s;
+  font-family: var(--font-main);
+}
+.why-btn:hover {
+  background: rgba(74,222,128,0.22);
+  transform: scale(1.05);
+}
+
+/* -- Soil data expandable panel -- */
+.soil-panel {
+  background: rgba(74,222,128,0.05);
+  border: 1px solid rgba(74,222,128,0.15);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 4px 0 8px 0;
+  animation: fadeIn 0.2s ease;
+}
+.soil-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 14px;
+  margin-bottom: 2px;
+}
+.soil-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.soil-label {
+  font-size: 9px;
+  color: rgba(232,245,233,0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.soil-val {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(232,245,233,0.85);
+}
+
+/* -- Feedback row on bot messages -- */
+.msg-feedback {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.fb-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(232,245,233,0.5);
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-main);
+}
+.fb-btn:hover {
+  background: rgba(74,222,128,0.12);
+  border-color: rgba(74,222,128,0.3);
+  color: #4ade80;
+}
+
+/* -- SMS mode chat styling -- */
+.chat-messages.sms-mode .msg-bubble.bot .msg-content {
+  font-family: monospace;
+  font-size: 12px;
+  letter-spacing: 0;
+}
+.chat-messages.sms-mode .chat-photo-bubble {
+  display: none !important;
+}
+.chat-messages.sms-mode .msg-bubble {
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+.chat-messages.sms-mode {
+  background: #111811;
+}
