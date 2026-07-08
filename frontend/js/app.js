@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 //  KisanAlert Dashboard - app.js
 //  Agricultural Intelligence Platform Frontend
 //  Written: July 2026
@@ -199,7 +199,7 @@ var MOCK_FARMERS = [
 var MOCK_CHAT_RESPONSES = {
   default_te: `నమస్కారం! మీ సమస్య అర్థమైంది. 🌿\n\nఆకులు పసుపు రంగుకు మారడం సాధారణంగా నత్రజని లోపం (Nitrogen Deficiency) వల్ల జరుగుతుంది.\n\n**సూచించిన చికిత్స:**\n• యూరియా 2% స్ప్రే (20g/litre) వారానికి ఒకసారి\n• మట్టి పరీక్ష చేయించుకోండి\n• నీరు పెట్టే సమయం మార్చండి - ఉదయం పెట్టండి\n\n⚠️ RSK కేంద్రానికి తెలియజేశాం.`,
   default_hi: `नमस्ते किसान भाई! 🌾\n\nआपके सवाल के आधार पर - इस मौसम में Warangal के लिए सबसे अच्छी फसलें:\n\n🥇 **कपास (Cotton)** - मिट्टी अनुकूलता 88%\n🥈 **सोयाबीन** - 74%, अच्छी बाजार मांग\n🥉 **मक्का** - 61%, कम पानी में भी अच्छी\n\nMSP 2024-25: कपास ₹7,121/क्विंटल\n\nक्या आप विस्तृत जानकारी चाहते हैं?`,
-  default_en: `Hello! Based on your query, here's what our AI analysis suggests:\n\nFor your district and current season, we recommend focusing on soil health monitoring. Our Gemini-powered system has analyzed historical crop data for 11 districts.\n\n📊 Confidence Score: 87%\n\nWould you like a detailed recommendation with input costs?`,
+  default_en: `Hello! Based on your query, here's what our AI analysis suggests:\n\nKisanAlert is currently live in Chittoor district (Andhra Pradesh) as a pilot, with 10 more districts in the onboarding queue. Our Gemini-powered system has analyzed crop data, soil maps, and IMD weather feeds for the pilot zone.\n\nConfidence Score: 87%\n\nWould you like a detailed recommendation with input costs?`,
   crop_advice: `🌾 **Crop Recommendation - ${nowDateStr()}**\n\nBased on soil data, rainfall forecast & MSP for your district:\n\n1. 🥇 Cotton - Suitability 88%, MSP ₹7,121\n2. 🥈 Soybean - Suitability 74%, MSP ₹4,600\n3. 🥉 Maize - Suitability 61%, Good market demand\n\n💧 Water requirement: Cotton needs 700mm/season\n📅 Best sowing window: June 15 – July 10`,
   weather_alert: `⛈️ **Weather Alert - Active**\n\nDistrict: ${currentDistrict || 'Your District'}\nIMD Forecast (next 72h):\n\n• Rainfall: 45–60mm expected\n• Max Temp: 36°C | Min: 24°C\n• Wind: NE 18 km/h\n\n⚠️ **Advisory:** Delay pesticide spray for 2 days. Ensure proper drainage in fields.\n\n🌦 Next dry window: Thursday onwards`,
   diagnose: `🔬 **Gemini Vision Analysis Complete**\n\nCrop: Groundnut\nDisease Detected: **Leaf Spot (Cercospora arachidicola)**\nConfidence: 91%\nSeverity: HIGH\n\n💊 **Treatment Protocol:**\n• Mancozeb 75 WP @ 2g/L - spray immediately\n• Remove infected leaves\n• Avoid overhead irrigation\n\n🚩 Case flagged to RSK Chittoor Block 3 for field visit.`
@@ -1388,40 +1388,74 @@ function initDistrictMap() {
   var tooltip = document.getElementById('map-tooltip');
   if (!g) return;
 
+  var PILOT_DISTRICT = 'Chittoor';
   var colors = { high: '#ef4444', medium: '#f59e0b', active: '#4ade80' };
 
   DISTRICT_PINS.forEach(function(d) {
-    var color = colors[d.severity] || '#4ade80';
+    var isPilot = (d.name === PILOT_DISTRICT);
+    var color = isPilot ? '#4ade80' : (colors[d.severity] || '#6b7280');
     var group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     group.setAttribute('class', 'district-pin');
     group.setAttribute('transform', 'translate(' + d.x + ',' + d.y + ')');
 
+    if (isPilot) {
+      // Outer glow ring for the live pilot
+      var glow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      glow.setAttribute('r', '18'); glow.setAttribute('fill', 'none');
+      glow.setAttribute('stroke', '#4ade80'); glow.setAttribute('stroke-width', '1.5');
+      glow.setAttribute('opacity', '0.35');
+      group.appendChild(glow);
+    }
+
     // Pulse ring
     var ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    ring.setAttribute('r', '14'); ring.setAttribute('fill', color); ring.setAttribute('opacity', '0.15');
+    ring.setAttribute('r', isPilot ? '16' : '12');
+    ring.setAttribute('fill', color);
+    ring.setAttribute('opacity', isPilot ? '0.2' : '0.08');
 
     // Main dot
     var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    dot.setAttribute('r', '7'); dot.setAttribute('fill', color); dot.setAttribute('stroke', '#0a0f0a'); dot.setAttribute('stroke-width', '2');
+    dot.setAttribute('r', isPilot ? '8' : '5');
+    dot.setAttribute('fill', isPilot ? color : 'rgba(255,255,255,0.3)');
+    dot.setAttribute('stroke', isPilot ? '#0a0f0a' : 'rgba(255,255,255,0.2)');
+    dot.setAttribute('stroke-width', '1.5');
 
     // Label
     var label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    label.setAttribute('y', '22'); label.setAttribute('text-anchor', 'middle');
-    label.setAttribute('font-size', '8'); label.setAttribute('fill', 'rgba(232,245,233,0.7)');
+    label.setAttribute('y', isPilot ? '26' : '20');
+    label.setAttribute('text-anchor', 'middle');
+    label.setAttribute('font-size', isPilot ? '9' : '7');
+    label.setAttribute('font-weight', isPilot ? '700' : '400');
+    label.setAttribute('fill', isPilot ? '#4ade80' : 'rgba(232,245,233,0.4)');
     label.setAttribute('font-family', 'Inter, sans-serif');
-    label.textContent = d.name;
+    label.textContent = isPilot ? d.name + ' *' : d.name;
 
-    group.appendChild(ring); group.appendChild(dot); group.appendChild(label);
+    if (isPilot) {
+      var pilotTag = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      pilotTag.setAttribute('y', '37');
+      pilotTag.setAttribute('text-anchor', 'middle');
+      pilotTag.setAttribute('font-size', '6');
+      pilotTag.setAttribute('fill', 'rgba(74,222,128,0.7)');
+      pilotTag.setAttribute('font-family', 'Inter, sans-serif');
+      pilotTag.textContent = 'LIVE PILOT';
+      group.appendChild(ring); group.appendChild(dot); group.appendChild(label); group.appendChild(pilotTag);
+    } else {
+      group.appendChild(ring); group.appendChild(dot); group.appendChild(label);
+    }
 
     // Tooltip on hover
-    group.addEventListener('mouseenter', function(e) {
+    group.addEventListener('mouseenter', function() {
       if (!tooltip) return;
+      var statusLine = isPilot
+        ? '<span style="color:#4ade80;font-weight:700">LIVE PILOT</span>'
+        : '<span style="color:rgba(245,158,11,0.8)">Onboarding Queue</span>';
       var sevLabel = d.severity === 'high' ? '🔴 HIGH' : d.severity === 'medium' ? '🟡 MEDIUM' : '🟢 ACTIVE';
       tooltip.innerHTML =
-        '<strong style="color:#4ade80">' + d.name + '</strong><br>' +
+        '<strong style="color:#4ade80">' + d.name + '</strong>' +
+        (d.state ? ' <span style="opacity:0.5;font-size:10px">' + d.state + '</span>' : '') + '<br>' +
         'Main Crop: ' + d.crop + '<br>' +
-        'Alerts Today: <strong>' + d.alerts + '</strong><br>' +
-        'Status: ' + sevLabel;
+        (isPilot ? 'Alerts Today: <strong>' + d.alerts + '</strong><br>' : '') +
+        'Deployment: ' + statusLine;
       tooltip.style.display = 'block';
       tooltip.style.left = (d.x + 20) + 'px';
       tooltip.style.top  = (d.y - 10) + 'px';
