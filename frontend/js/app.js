@@ -862,11 +862,15 @@ function renderRecommendations(recs) {
           '</div>';
       }
       return '<div class="rec-crop-row">' +
-        '<span class="rec-rank-badge" style="color:' + rankColor + ';font-size:10px;font-weight:700;width:18px;flex-shrink:0">' + rank + '</span>' +
-        '<span class="rec-crop-name">' + c.name + '</span>' +
-        '<div class="rec-score-bar"><div class="rec-score-fill" style="width:' + barWidth + '%;background:' + bandColor + '"></div></div>' +
-        '<span style="font-size:10px;color:' + bandColor + ';flex-shrink:0;width:28px;text-align:right;font-weight:600">' + c.score + '%</span>' +
-        (c.soil ? '<button class="why-btn" onclick="var e=document.getElementById(\'' + uid + '\');e.style.display=e.style.display===\'none\'?\'block\':\'none\'">Why?</button>' : '') +
+        '<div class="rec-crop-row-top">' +
+          '<span style="color:' + rankColor + ';font-size:10px;font-weight:700;width:18px;flex-shrink:0">' + rank + '</span>' +
+          '<span class="rec-crop-name">' + c.name + '</span>' +
+          '<span style="font-size:10px;color:' + bandColor + ';font-weight:700;flex-shrink:0">' + c.score + '%</span>' +
+        '</div>' +
+        '<div class="rec-crop-row-bottom">' +
+          '<div class="rec-score-bar"><div class="rec-score-fill" style="width:' + barWidth + '%;background:' + bandColor + '"></div></div>' +
+          (c.soil ? '<button class="why-btn" onclick="var e=document.getElementById(\'' + uid + '\');e.style.display=e.style.display===\'none\'?\'block\':\'none\'">Why?</button>' : '') +
+        '</div>' +
       '</div>' + soilPanel;
     }).join('');
 
