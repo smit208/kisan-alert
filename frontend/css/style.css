@@ -1727,3 +1727,18 @@ body {
   color: var(--text-secondary);
 }
 
+/* Rec row layout: rank badge + name + proportional bar + score */
+.rec-crop-row {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+}
+.rec-crop-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+}
+.rec-score-bar {
+  width: 80px !important;
+  flex-shrink: 0;
+}

@@ -182,14 +182,14 @@ var MOCK_ALERTS = [
 ];
 
 var MOCK_FARMERS = [
-  { name: 'Ramaiah', district: 'Chittoor', lang: 'తెలుగు', avatar: '👨‍🌾' },
-  { name: 'Suresh Kumar', district: 'Warangal', lang: 'हिंदी', avatar: '🧑‍🌾' },
-  { name: 'Basavaraj', district: 'Bijapur', lang: 'ಕನ್ನಡ', avatar: '👴' },
-  { name: 'Mangesh Patil', district: 'Nashik', lang: 'मराठी', avatar: '👨' },
-  { name: 'Narasimha Rao', district: 'Kurnool', lang: 'తెలుగు', avatar: '🧔' },
-  { name: 'Laxmi Devi', district: 'Nalgonda', lang: 'తెలుగు', avatar: '👩‍🌾' },
-  { name: 'Rajendra Yadav', district: 'Madhubani', lang: 'हिंदी', avatar: '🧑' },
-  { name: 'Kavitha S', district: 'Guntur', lang: 'తెలుగు', avatar: '👩' }
+  { name: 'Ramaiah',       district: 'Chittoor',  lang: 'తెలుగు' },
+  { name: 'Suresh Kumar',  district: 'Warangal',  lang: 'हिंदी' },
+  { name: 'Basavaraj',     district: 'Bijapur',   lang: 'ಕನ್ನಡ' },
+  { name: 'Mangesh Patil', district: 'Nashik',    lang: 'मराठी' },
+  { name: 'Narasimha Rao', district: 'Kurnool',   lang: 'తెలుగు' },
+  { name: 'Laxmi Devi',    district: 'Nalgonda',  lang: 'తెలుగు' },
+  { name: 'Rajendra Yadav',district: 'Madhubani', lang: 'हिंदी' },
+  { name: 'Kavitha S.',    district: 'Guntur',    lang: 'తెలుగు' }
 ];
 
 // ============================================================
@@ -769,16 +769,32 @@ function renderRecommendations(recs) {
   var grid = document.getElementById('rec-grid');
   grid.innerHTML = '';
 
+  // Rank colors: gold, silver, bronze
+  var rankColors = ['#f59e0b', '#94a3b8', '#cd7c3f'];
+  var rankLabels = ['#1', '#2', '#3'];
+
   recs.forEach(function(rec, idx) {
     var card = document.createElement('div');
     card.className = 'rec-card';
     card.style.animationDelay = (idx * 0.07) + 's';
 
-    var cropsHtml = rec.crops.map(function(c) {
+    // Find max score in this district for proportional scaling
+    var maxScore = Math.max.apply(null, rec.crops.map(function(c) { return c.score; }));
+
+    var cropsHtml = rec.crops.map(function(c, ci) {
+      // Width is proportional relative to the top crop — not just raw %
+      // This makes the visual difference obvious even when scores are 88/74/61
+      var barWidth = Math.round((c.score / maxScore) * 100);
+      var color = rankColors[ci] || '#4ade80';
+      var rank  = rankLabels[ci] || '';
       return '<div class="rec-crop-row">' +
+        '<span class="rec-rank-badge" style="color:' + color + ';font-size:10px;font-weight:700;width:18px;flex-shrink:0">' + rank + '</span>' +
         '<span class="rec-crop-name">' + c.name + '</span>' +
-        '<div class="rec-score-bar"><div class="rec-score-fill" style="width:' + c.score + '%"></div></div>' +
-        '</div>';
+        '<div class="rec-score-bar">' +
+          '<div class="rec-score-fill" style="width:' + barWidth + '%;background:' + color + '"></div>' +
+        '</div>' +
+        '<span style="font-size:10px;color:rgba(232,245,233,0.6);flex-shrink:0;width:30px;text-align:right">' + c.score + '%</span>' +
+      '</div>';
     }).join('');
 
     card.innerHTML = '<div class="rec-card-header">' +
@@ -816,6 +832,14 @@ function renderAlerts(alerts) {
 }
 
 // ---- Active Farmers Tab ----
+// Generate a consistent color from a name string
+function nameToColor(name) {
+  var colors = ['#4ade80','#38bdf8','#f59e0b','#a78bfa','#fb7185','#34d399','#60a5fa','#fbbf24'];
+  var hash = 0;
+  for (var i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return colors[Math.abs(hash) % colors.length];
+}
+
 function renderFarmers(farmers) {
   if (farmers === MOCK_FARMERS || (_allFarmers.length === 0 && farmers.length > 0)) {
     _allFarmers = farmers;
@@ -828,7 +852,22 @@ function renderFarmers(farmers) {
     card.className = 'farmer-card';
     card.style.animationDelay = (idx * 0.05) + 's';
 
-    card.innerHTML = '<div class="farmer-card-avatar">' + f.avatar + '</div>' +
+    // Initials avatar — two letters, colored circle
+    var parts = (f.name || '?').split(' ');
+    var initials = parts.length > 1
+      ? parts[0][0] + parts[parts.length - 1][0]
+      : parts[0].substring(0, 2);
+    var bgColor = nameToColor(f.name || '');
+    var avatarHtml = '<div style="' +
+      'width:38px;height:38px;border-radius:50%;' +
+      'background:' + bgColor + '22;' +
+      'border:2px solid ' + bgColor + '66;' +
+      'display:flex;align-items:center;justify-content:center;' +
+      'font-size:13px;font-weight:700;color:' + bgColor + ';' +
+      'flex-shrink:0;letter-spacing:0.5px' +
+    '">' + initials.toUpperCase() + '</div>';
+
+    card.innerHTML = avatarHtml +
       '<div class="farmer-card-name">' + f.name + '</div>' +
       '<div class="farmer-card-district">📍 ' + f.district + '</div>' +
       '<span class="farmer-card-lang">' + f.lang + '</span>';
@@ -895,16 +934,41 @@ function updateStatCounter(id, delta) {
 //  LIVE UPDATE SIMULATION
 // ============================================================
 
+var _tickerPaused = false;
+var _idleTimer = null;
+
+function pauseTicker() {
+  _tickerPaused = true;
+  var tickerText = document.getElementById('ticker-text');
+  if (tickerText) tickerText.textContent = 'Live monitoring active — paused during interaction';
+
+  // Auto-resume after 30s of no interaction
+  clearTimeout(_idleTimer);
+  _idleTimer = setTimeout(function() {
+    _tickerPaused = false;
+    tickerCountdown = 30;
+    var t = document.getElementById('ticker-text');
+    if (t) t.textContent = 'Live monitoring active — Next update in 30s';
+  }, 30000);
+}
+
 function startLiveTicker() {
   var tickerText = document.getElementById('ticker-text');
   tickerCountdown = 30;
 
+  // Pause ticker on any user interaction with the dashboard
+  ['mousedown', 'keydown', 'touchstart'].forEach(function(evt) {
+    document.addEventListener(evt, function() {
+      if (!_tickerPaused) pauseTicker();
+    }, { passive: true });
+  });
+
   tickerInterval = setInterval(function() {
+    if (_tickerPaused) return;
     tickerCountdown--;
     if (tickerText) {
       tickerText.textContent = 'Live monitoring active — Next update in ' + tickerCountdown + 's';
     }
-
     if (tickerCountdown <= 0) {
       tickerCountdown = 30;
       performLiveUpdate();
