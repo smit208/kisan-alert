@@ -527,10 +527,12 @@ var CROP_EMOJI_MAP = {
 };
 
 var CROP_PHOTO_MAP = {
+  // Local generated images — guaranteed to match the disease
+  'Groundnut':  'img/groundnut_leaf_spot.png',
+  'Cotton':     'img/cotton_leaf_curl.png',
+  'Chilli':     'img/chilli_anthracnose.png',
+  // Unsplash for other crops (verified content)
   'Rice':       'https://images.unsplash.com/photo-1536054989289-13de2f4c62e0?w=60&h=60&fit=crop',
-  'Cotton':     'https://images.unsplash.com/photo-1606914501449-5a96b6cd5e4e?w=60&h=60&fit=crop',
-  'Groundnut':  'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=60&h=60&fit=crop',
-  'Chilli':     'https://images.unsplash.com/photo-1518977956812-cd3dbadaaf31?w=60&h=60&fit=crop',
   'Wheat':      'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=60&h=60&fit=crop',
   'Soybean':    'https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=60&h=60&fit=crop',
   'Maize':      'https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=60&h=60&fit=crop',
@@ -1361,16 +1363,24 @@ function endCall() {
 //  DISTRICT MAP
 // ============================================================
 var DISTRICT_PINS = [
-  { name: 'Madhubani',  x: 265, y: 115, severity: 'active',  alerts: 3,  crop: 'Wheat' },
-  { name: 'Vidisha',   x: 210, y: 195, severity: 'medium',  alerts: 7,  crop: 'Soybean' },
-  { name: 'Nashik',    x: 140, y: 240, severity: 'active',  alerts: 4,  crop: 'Grapes' },
-  { name: 'Solapur',   x: 155, y: 275, severity: 'medium',  alerts: 5,  crop: 'Jowar' },
-  { name: 'Bijapur',   x: 160, y: 315, severity: 'active',  alerts: 2,  crop: 'Maize' },
-  { name: 'Warangal',  x: 240, y: 285, severity: 'medium',  alerts: 8,  crop: 'Cotton' },
-  { name: 'Nalgonda',  x: 230, y: 305, severity: 'medium',  alerts: 6,  crop: 'Cotton' },
-  { name: 'Kurnool',   x: 210, y: 330, severity: 'medium',  alerts: 9,  crop: 'Groundnut' },
-  { name: 'Guntur',    x: 245, y: 340, severity: 'medium',  alerts: 11, crop: 'Chilli' },
-  { name: 'Chittoor',  x: 225, y: 375, severity: 'high',    alerts: 14, crop: 'Groundnut' }
+  // Bihar
+  { name: 'Madhubani',  x: 310, y:  95, severity: 'active',  alerts:  3, crop: 'Wheat',     state: 'Bihar' },
+  // Madhya Pradesh
+  { name: 'Vidisha',    x: 195, y: 165, severity: 'medium',  alerts:  7, crop: 'Soybean',   state: 'MP' },
+  // Maharashtra
+  { name: 'Nashik',     x: 105, y: 215, severity: 'active',  alerts:  4, crop: 'Grapes',    state: 'Maharashtra' },
+  { name: 'Solapur',   x: 120, y: 255, severity: 'medium',  alerts:  5, crop: 'Jowar',     state: 'Maharashtra' },
+  // Karnataka
+  { name: 'Bijapur',   x: 130, y: 295, severity: 'active',  alerts:  2, crop: 'Maize',     state: 'Karnataka' },
+  // Telangana
+  { name: 'Warangal',  x: 255, y: 255, severity: 'medium',  alerts:  8, crop: 'Cotton',    state: 'Telangana' },
+  { name: 'Nalgonda',  x: 235, y: 285, severity: 'medium',  alerts:  6, crop: 'Cotton',    state: 'Telangana' },
+  // Andhra Pradesh
+  { name: 'Kurnool',   x: 200, y: 315, severity: 'medium',  alerts:  9, crop: 'Groundnut', state: 'AP' },
+  { name: 'Guntur',    x: 248, y: 330, severity: 'medium',  alerts: 11, crop: 'Chilli',    state: 'AP' },
+  { name: 'Chittoor',  x: 218, y: 370, severity: 'high',    alerts: 14, crop: 'Groundnut', state: 'AP' },
+  // Odisha
+  { name: 'Kalahandi', x: 300, y: 240, severity: 'active',  alerts:  2, crop: 'Paddy',     state: 'Odisha' }
 ];
 
 function initDistrictMap() {

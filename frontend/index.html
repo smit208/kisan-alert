@@ -338,12 +338,50 @@
               <span class="legend-item"><span class="legend-dot medium"></span>Medium Alert</span>
               <span class="legend-item"><span class="legend-dot active"></span>Active</span>
             </div>
-            <svg id="india-map" viewBox="0 0 420 520" style="width:100%;max-height:340px">
-              <!-- Simplified India outline -->
-              <path d="M120,40 L180,30 L240,35 L290,55 L320,80 L340,120 L350,160 L345,200 L360,230 L370,270 L355,310 L330,350 L300,390 L270,420 L240,450 L210,470 L190,460 L175,440 L155,410 L130,380 L110,350 L90,310 L75,270 L70,230 L80,190 L85,150 L90,110 L100,75 Z" fill="rgba(74,222,128,0.05)" stroke="rgba(74,222,128,0.2)" stroke-width="1.5"/>
-              <!-- District pins will be injected by JS -->
-              <g id="district-pins"></g>
+            <svg id="india-map" viewBox="0 0 420 520" style="width:100%;max-height:360px">
+              <defs>
+                <filter id="map-glow"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              </defs>
+
+              <!-- Bihar (northeast) -->
+              <path d="M255,55 L340,50 L360,70 L355,100 L330,115 L295,110 L265,95 Z"
+                fill="rgba(74,222,128,0.06)" stroke="rgba(74,222,128,0.25)" stroke-width="1"/>
+              <text x="305" y="85" text-anchor="middle" font-size="7" fill="rgba(232,245,233,0.3)" font-family="Inter,sans-serif">BIHAR</text>
+
+              <!-- Odisha (east) -->
+              <path d="M295,110 L355,100 L365,130 L360,175 L330,195 L300,185 L275,160 L270,135 Z"
+                fill="rgba(74,222,128,0.06)" stroke="rgba(74,222,128,0.25)" stroke-width="1"/>
+              <text x="325" y="148" text-anchor="middle" font-size="7" fill="rgba(232,245,233,0.3)" font-family="Inter,sans-serif">ODISHA</text>
+
+              <!-- Madhya Pradesh (centre) -->
+              <path d="M100,75 L255,55 L265,95 L270,135 L275,160 L230,175 L190,165 L160,150 L120,155 L90,140 L80,110 Z"
+                fill="rgba(74,222,128,0.06)" stroke="rgba(74,222,128,0.25)" stroke-width="1"/>
+              <text x="183" y="118" text-anchor="middle" font-size="7" fill="rgba(232,245,233,0.3)" font-family="Inter,sans-serif">MADHYA PRADESH</text>
+
+              <!-- Maharashtra (west-centre) -->
+              <path d="M65,140 L90,140 L120,155 L160,150 L190,165 L195,200 L185,230 L170,255 L145,270 L110,265 L80,250 L60,220 L55,185 Z"
+                fill="rgba(74,222,128,0.06)" stroke="rgba(74,222,128,0.25)" stroke-width="1"/>
+              <text x="128" y="210" text-anchor="middle" font-size="7" fill="rgba(232,245,233,0.3)" font-family="Inter,sans-serif">MAHARASHTRA</text>
+
+              <!-- Telangana (centre) -->
+              <path d="M190,165 L230,175 L275,160 L300,185 L290,220 L280,250 L260,265 L235,270 L205,260 L185,230 L195,200 Z"
+                fill="rgba(56,189,248,0.07)" stroke="rgba(56,189,248,0.25)" stroke-width="1"/>
+              <text x="242" y="218" text-anchor="middle" font-size="7" fill="rgba(56,189,248,0.4)" font-family="Inter,sans-serif">TELANGANA</text>
+
+              <!-- Karnataka (south-west) -->
+              <path d="M65,270 L110,265 L145,270 L170,255 L185,280 L175,315 L155,340 L130,355 L100,345 L75,320 L60,295 Z"
+                fill="rgba(74,222,128,0.06)" stroke="rgba(74,222,128,0.25)" stroke-width="1"/>
+              <text x="120" y="310" text-anchor="middle" font-size="7" fill="rgba(232,245,233,0.3)" font-family="Inter,sans-serif">KARNATAKA</text>
+
+              <!-- Andhra Pradesh (south-east) -->
+              <path d="M185,280 L205,260 L235,270 L260,265 L280,250 L290,220 L300,185 L330,195 L360,175 L365,220 L350,265 L330,300 L300,330 L265,355 L235,370 L210,380 L185,360 L165,335 L155,340 L175,315 Z"
+                fill="rgba(74,222,128,0.08)" stroke="rgba(74,222,128,0.3)" stroke-width="1.2"/>
+              <text x="280" y="295" text-anchor="middle" font-size="7" fill="rgba(232,245,233,0.4)" font-family="Inter,sans-serif">ANDHRA PRADESH</text>
+
+              <!-- District pins injected by JS -->
+              <g id="district-pins" filter="url(#map-glow)"></g>
             </svg>
+
             <div id="map-tooltip" class="map-tooltip" style="display:none"></div>
           </div>
         </div>
@@ -395,6 +433,6 @@
     </div>
   </div>
 
-  <script src="js/app.js?v=8"></script>
+  <script src="js/app.js?v=9"></script>
 </body>
 </html>
