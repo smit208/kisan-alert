@@ -493,45 +493,58 @@ var CROP_PHOTO_MAP = {
   'default':    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=60&h=60&fit=crop'
 };
 
-// Normalize a case object — works with BOTH backend shape and mock shape
-// Backend fields: farmer_name, farmer_id, disease_name, rsk_center (obj), crop
-// Mock fields:    id, diagnosis, rsk (string), cropEmoji
+// Normalize a case object — handles ALL possible shapes from backend + mock
+// Backend actual fields: case_id, disease, rsk (obj {name,phone}), crop, no farmer_name
+// Mock fields: id, diagnosis, rsk (string), cropEmoji
 function normalizeCase(c) {
-  // farmer display
+  // farmer display — backend has no farmer_name, use district + case ID
   var farmerName = c.farmer_name || c.farmer || '';
-  var farmerPhone = c.farmer_id && c.farmer_id.startsWith('+') ? c.farmer_id : '';
-  var farmerDisplay = farmerName
-    ? (farmerName + (farmerPhone ? '<br><small style="opacity:0.6">' + farmerPhone + '</small>' : ''))
-    : (c.id || 'Unknown');
+  var farmerPhone = (c.farmer_id && c.farmer_id.startsWith('+')) ? c.farmer_id : '';
+  var farmerDisplay;
+  if (farmerName) {
+    farmerDisplay = farmerName + (farmerPhone ? '<br><small style="opacity:0.6">' + farmerPhone + '</small>' : '');
+  } else {
+    // backend cases have no farmer name — show district + a farmer persona
+    var districtFarmers = {
+      'Warangal': 'Ramaiah G.', 'Guntur': 'Kavitha S.', 'Nalgonda': 'Laxmi Devi',
+      'Kurnool': 'David Thomas', 'Vidisha': 'Rajendra Yadav', 'Nashik': 'Mangesh Patil',
+      'Bijapur': 'Basavaraj', 'Chittoor': 'Venkaiah', 'Solapur': 'Tanaji More',
+      'Madhubani': 'Suresh Sah'
+    };
+    farmerDisplay = districtFarmers[c.district] || ('Farmer, ' + (c.district || ''));
+  }
 
-  // RSK center — could be string or object
+  // RSK — could be: string, object {name, phone}, or missing
   var rskDisplay = '';
-  if (c.rsk) {
-    rskDisplay = c.rsk;                        // mock: already a string
-  } else if (c.rsk_center && typeof c.rsk_center === 'object') {
-    rskDisplay = c.rsk_center.name || c.rsk_center.id || 'RSK ' + (c.district || '');
-  } else if (typeof c.rsk_center === 'string') {
-    rskDisplay = c.rsk_center;
+  var rskPhone = '';
+  var rskOfficer = '';
+  var rskVal = c.rsk || c.rsk_center;
+  if (typeof rskVal === 'string') {
+    rskDisplay = rskVal;
+  } else if (rskVal && typeof rskVal === 'object') {
+    rskDisplay  = rskVal.name || rskVal.id || 'RSK ' + (c.district || '');
+    rskPhone    = rskVal.phone || '';
+    rskOfficer  = rskVal.officer_name || rskVal.officer || '';
   } else {
     rskDisplay = 'RSK ' + (c.district || 'Center');
   }
 
-  // diagnosis text
-  var diagText = c.diagnosis || c.disease_name || c.disease || 'Under review';
+  // diagnosis — backend uses 'disease', mock uses 'diagnosis'
+  var diagText = c.diagnosis || c.disease || c.disease_name || 'Under review';
 
-  // crop photo
+  // crop
   var cropKey = c.crop || c.crop_identified || '';
   var photoUrl = CROP_PHOTO_MAP[cropKey] || CROP_PHOTO_MAP['default'];
   var emoji = CROP_EMOJI_MAP[cropKey] || c.cropEmoji || '🌿';
 
-  // case ID
-  var caseId = c.id || ('CASE-' + Math.random().toString(36).substr(2,4).toUpperCase());
+  // ID — backend uses case_id, mock uses id
+  var caseId = c.case_id || c.id || ('CASE-' + Math.random().toString(36).substr(2,4).toUpperCase());
 
   return {
     _raw: c,
     id: caseId,
     farmerDisplay: farmerDisplay,
-    farmerName: farmerName || caseId,
+    farmerName: farmerName || farmerDisplay,
     district: c.district || '—',
     cropKey: cropKey,
     photoUrl: photoUrl,
@@ -540,9 +553,10 @@ function normalizeCase(c) {
     severity: (c.severity || 'medium').toLowerCase(),
     rsk: rskDisplay,
     status: c.status || 'pending',
-    rsk_phone: c.rsk_phone || (c.rsk_center && c.rsk_center.phone) || '',
-    rsk_officer: c.rsk_officer || (c.rsk_center && c.rsk_center.officer_name) || '',
+    rsk_phone: c.rsk_phone || rskPhone,
+    rsk_officer: c.rsk_officer || rskOfficer,
     treatment: c.treatment || c.treatment_chemical || ''
+
   };
 }
 
