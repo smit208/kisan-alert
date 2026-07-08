@@ -471,6 +471,202 @@ function animateCounter(el, target) {
   }, 16);
 }
 
+// ---- crop emoji map by crop name ----
+var CROP_EMOJI_MAP = {
+  'Rice': '🌾', 'Wheat': '🌾', 'Cotton': '🪴', 'Groundnut': '🥜',
+  'Soybean': '🫘', 'Jowar': '🌾', 'Bajra': '🌾', 'Maize': '🌽',
+  'Chilli': '🌶️', 'Tomato': '🍅', 'Onion': '🧅', 'Grapes': '🍇',
+  'Sunflower': '🌻', 'Sugarcane': '🎋', 'Turmeric': '🟡', 'default': '🌿'
+};
+
+var CROP_PHOTO_MAP = {
+  'Rice':       'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=60&h=60&fit=crop',
+  'Cotton':     'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=60&h=60&fit=crop',
+  'Groundnut':  'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=60&h=60&fit=crop',
+  'Chilli':     'https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?w=60&h=60&fit=crop',
+  'Wheat':      'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=60&h=60&fit=crop',
+  'Soybean':    'https://images.unsplash.com/photo-1515543904379-3d757afe72e4?w=60&h=60&fit=crop',
+  'default':    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=60&h=60&fit=crop'
+};
+
+// Normalize a case object — works with BOTH backend shape and mock shape
+// Backend fields: farmer_name, farmer_id, disease_name, rsk_center (obj), crop
+// Mock fields:    id, diagnosis, rsk (string), cropEmoji
+function normalizeCase(c) {
+  // farmer display
+  var farmerName = c.farmer_name || c.farmer || '';
+  var farmerPhone = c.farmer_id && c.farmer_id.startsWith('+') ? c.farmer_id : '';
+  var farmerDisplay = farmerName
+    ? (farmerName + (farmerPhone ? '<br><small style="opacity:0.6">' + farmerPhone + '</small>' : ''))
+    : (c.id || 'Unknown');
+
+  // RSK center — could be string or object
+  var rskDisplay = '';
+  if (c.rsk) {
+    rskDisplay = c.rsk;                        // mock: already a string
+  } else if (c.rsk_center && typeof c.rsk_center === 'object') {
+    rskDisplay = c.rsk_center.name || c.rsk_center.id || 'RSK ' + (c.district || '');
+  } else if (typeof c.rsk_center === 'string') {
+    rskDisplay = c.rsk_center;
+  } else {
+    rskDisplay = 'RSK ' + (c.district || 'Center');
+  }
+
+  // diagnosis text
+  var diagText = c.diagnosis || c.disease_name || c.disease || 'Under review';
+
+  // crop photo
+  var cropKey = c.crop || c.crop_identified || '';
+  var photoUrl = CROP_PHOTO_MAP[cropKey] || CROP_PHOTO_MAP['default'];
+  var emoji = CROP_EMOJI_MAP[cropKey] || c.cropEmoji || '🌿';
+
+  // case ID
+  var caseId = c.id || ('CASE-' + Math.random().toString(36).substr(2,4).toUpperCase());
+
+  return {
+    _raw: c,
+    id: caseId,
+    farmerDisplay: farmerDisplay,
+    farmerName: farmerName || caseId,
+    district: c.district || '—',
+    cropKey: cropKey,
+    photoUrl: photoUrl,
+    emoji: emoji,
+    diagnosis: diagText,
+    severity: (c.severity || 'medium').toLowerCase(),
+    rsk: rskDisplay,
+    status: c.status || 'pending',
+    rsk_phone: c.rsk_phone || (c.rsk_center && c.rsk_center.phone) || '',
+    rsk_officer: c.rsk_officer || (c.rsk_center && c.rsk_center.officer_name) || '',
+    treatment: c.treatment || c.treatment_chemical || ''
+  };
+}
+
+// ---- Flagged Cases Table ----
+function renderFlaggedCases(cases) {
+  var tbody = document.getElementById('flagged-tbody');
+  tbody.innerHTML = '';
+
+  if (!cases || !cases.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;opacity:0.5;padding:24px">No flagged cases right now</td></tr>';
+    return;
+  }
+
+  cases.forEach(function(rawCase, idx) {
+    var c = normalizeCase(rawCase);
+    var tr = document.createElement('tr');
+    tr.style.animationDelay = (idx * 0.05) + 's';
+    tr.setAttribute('data-case-id', c.id);
+
+    var severityBadge = '<span class="badge ' + c.severity + '">' +
+      '<span class="badge-dot"></span>' +
+      c.severity.toUpperCase() + '</span>';
+
+    var statusPill = '<span class="status-pill ' + c.status + '">' + c.status.replace('_', ' ') + '</span>';
+
+    // Crop Photo — real thumbnail with emoji fallback
+    var photoCell = '<div class="crop-thumb-wrap" title="' + (c.cropKey || 'Crop') + '">' +
+      '<img src="' + c.photoUrl + '" alt="' + (c.cropKey || 'crop') + '" ' +
+      'style="width:40px;height:40px;border-radius:8px;object-fit:cover;border:1px solid rgba(255,255,255,0.1)" ' +
+      'onerror="this.style.display=\'none\';this.nextSibling.style.display=\'block\'">' +
+      '<span style="display:none;font-size:22px">' + c.emoji + '</span>' +
+      '</div>';
+
+    // Farmer ID column — name + masked phone
+    var farmerCell = c.farmerDisplay;
+
+    tr.innerHTML =
+      '<td style="font-size:12px">' + farmerCell + '</td>' +
+      '<td>' + c.district + '</td>' +
+      '<td>' + photoCell + '</td>' +
+      '<td style="max-width:140px;white-space:normal;font-size:12px">' + c.diagnosis + '</td>' +
+      '<td>' + severityBadge + '</td>' +
+      '<td style="font-size:12px">' + c.rsk + '</td>' +
+      '<td>' + statusPill + '</td>' +
+      '<td><button class="action-btn" onclick="openCase(\'' + c.id + '\')">View →</button></td>';
+
+    tbody.appendChild(tr);
+  });
+}
+
+// Store normalized cases for modal lookup
+var _casesCache = {};
+
+async function loadFlaggedCases() {
+  var data = await apiGet('/api/cases/flagged');
+  var raw = (data && data.cases && data.cases.length) ? data.cases : MOCK_FLAGGED_CASES;
+  // cache normalized cases by id
+  _casesCache = {};
+  raw.forEach(function(c) {
+    var n = normalizeCase(c);
+    _casesCache[n.id] = n;
+  });
+  renderFlaggedCases(raw);
+}
+
+function openCase(id) {
+  var c = _casesCache[id];
+  if (!c) { console.warn('case not found:', id); return; }
+
+  // Build modal HTML
+  var existing = document.getElementById('case-modal-overlay');
+  if (existing) existing.remove();
+
+  var sevColor = { high: '#ef5350', critical: '#b71c1c', medium: '#ff9800', low: '#4caf50' }[c.severity] || '#888';
+
+  var overlay = document.createElement('div');
+  overlay.id = 'case-modal-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.2s ease';
+  overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+
+  overlay.innerHTML =
+    '<div style="background:#1a2a1a;border:1px solid rgba(76,175,80,0.3);border-radius:16px;padding:28px;max-width:480px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.6)">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">' +
+      '<div>' +
+        '<div style="color:#4caf50;font-size:11px;letter-spacing:1px;text-transform:uppercase">Flagged Case</div>' +
+        '<div style="color:#e8f5e9;font-size:18px;font-weight:700;margin-top:4px">' + c.id + '</div>' +
+      '</div>' +
+      '<span style="background:' + sevColor + '22;color:' + sevColor + ';padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid ' + sevColor + '44">' + c.severity.toUpperCase() + '</span>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">' +
+      '<div style="background:rgba(76,175,80,0.08);border-radius:10px;padding:12px">' +
+        '<div style="color:rgba(232,245,233,0.5);font-size:10px;margin-bottom:4px">FARMER</div>' +
+        '<div style="color:#e8f5e9;font-size:13px;font-weight:600">' + (c.farmerName || c.id) + '</div>' +
+        '<div style="color:#4caf50;font-size:11px">' + (c.rsk_phone ? 'Ph: ' + c.rsk_phone : '') + '</div>' +
+      '</div>' +
+      '<div style="background:rgba(76,175,80,0.08);border-radius:10px;padding:12px">' +
+        '<div style="color:rgba(232,245,233,0.5);font-size:10px;margin-bottom:4px">DISTRICT</div>' +
+        '<div style="color:#e8f5e9;font-size:13px;font-weight:600">' + c.district + '</div>' +
+      '</div>' +
+      '<div style="background:rgba(76,175,80,0.08);border-radius:10px;padding:12px">' +
+        '<div style="color:rgba(232,245,233,0.5);font-size:10px;margin-bottom:4px">DIAGNOSIS</div>' +
+        '<div style="color:#ef9a9a;font-size:13px;font-weight:600">' + c.diagnosis + '</div>' +
+      '</div>' +
+      '<div style="background:rgba(76,175,80,0.08);border-radius:10px;padding:12px">' +
+        '<div style="color:rgba(232,245,233,0.5);font-size:10px;margin-bottom:4px">CROP</div>' +
+        '<div style="color:#e8f5e9;font-size:13px">' + c.emoji + ' ' + (c.cropKey || 'Unknown') + '</div>' +
+      '</div>' +
+    '</div>' +
+    (c.treatment ? '<div style="background:rgba(255,152,0,0.1);border:1px solid rgba(255,152,0,0.2);border-radius:10px;padding:12px;margin-bottom:16px">' +
+      '<div style="color:#ff9800;font-size:10px;letter-spacing:1px;margin-bottom:6px">RECOMMENDED TREATMENT</div>' +
+      '<div style="color:#e8f5e9;font-size:12px;line-height:1.5">' + c.treatment + '</div>' +
+    '</div>' : '') +
+    '<div style="background:rgba(76,175,80,0.08);border-radius:10px;padding:12px;margin-bottom:20px">' +
+      '<div style="color:rgba(232,245,233,0.5);font-size:10px;margin-bottom:4px">RSK CENTER ASSIGNED</div>' +
+      '<div style="color:#4caf50;font-size:13px;font-weight:600">' + c.rsk + '</div>' +
+      (c.rsk_officer ? '<div style="color:rgba(232,245,233,0.6);font-size:11px">Officer: ' + c.rsk_officer + '</div>' : '') +
+    '</div>' +
+    '<div style="display:flex;gap:10px">' +
+      '<button onclick="document.getElementById(\'case-modal-overlay\').remove()" ' +
+        'style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(76,175,80,0.3);background:transparent;color:#e8f5e9;cursor:pointer;font-size:13px">Close</button>' +
+      '<button onclick="alert(\'Dispatching RSK officer for field visit to ' + c.district + '...\')" ' +
+        'style="flex:2;padding:10px;border-radius:10px;border:none;background:linear-gradient(135deg,#2e7d32,#4caf50);color:white;cursor:pointer;font-size:13px;font-weight:600">📞 Dispatch RSK Officer</button>' +
+    '</div>' +
+    '</div>';
+
+  document.body.appendChild(overlay);
+}
+
 function initStatCounters() {
   document.querySelectorAll('.stat-value[data-target]').forEach(function(el) {
     var target = parseInt(el.getAttribute('data-target'), 10);
@@ -494,48 +690,6 @@ function initTabs() {
       if (pane) pane.classList.add('active');
     });
   });
-}
-
-// ---- Flagged Cases Table ----
-function renderFlaggedCases(cases) {
-  var tbody = document.getElementById('flagged-tbody');
-  tbody.innerHTML = '';
-
-  cases.forEach(function(c, idx) {
-    var tr = document.createElement('tr');
-    tr.style.animationDelay = (idx * 0.05) + 's';
-
-    var severityBadge = '<span class="badge ' + c.severity + '">' +
-      '<span class="badge-dot"></span>' +
-      c.severity.toUpperCase() + '</span>';
-
-    var statusMap = { pending: 'pending', contacted: 'contacted', resolved: 'resolved' };
-    var statusPill = '<span class="status-pill ' + (statusMap[c.status] || 'pending') + '">' + c.status + '</span>';
-
-    var cropCell = '<div class="crop-thumb">' + c.cropEmoji + '</div>';
-
-    tr.innerHTML = '<td>' + c.id + '</td>' +
-      '<td>' + c.district + '</td>' +
-      '<td>' + cropCell + '</td>' +
-      '<td>' + c.diagnosis + '</td>' +
-      '<td>' + severityBadge + '</td>' +
-      '<td>' + c.rsk + '</td>' +
-      '<td>' + statusPill + '</td>' +
-      '<td><button class="action-btn" onclick="openCase(\'' + c.id + '\')">View →</button></td>';
-
-    tbody.appendChild(tr);
-  });
-}
-
-async function loadFlaggedCases() {
-  var data = await apiGet('/api/cases/flagged');
-  var cases = (data && data.cases) ? data.cases : MOCK_FLAGGED_CASES;
-  renderFlaggedCases(cases);
-}
-
-function openCase(id) {
-  // TODO: open a detailed case modal — for now just alert
-  alert('Case ' + id + ' — Field visit being coordinated with RSK center.\n\n(In production: opens a detailed case management view)');
 }
 
 // ---- Recommendations Tab ----
