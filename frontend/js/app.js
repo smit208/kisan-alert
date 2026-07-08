@@ -1,5 +1,5 @@
-// ============================================================
-//  KisanAlert Dashboard — app.js
+﻿// ============================================================
+//  KisanAlert Dashboard - app.js
 //  Agricultural Intelligence Platform Frontend
 //  Written: July 2026
 // ============================================================
@@ -142,7 +142,7 @@ var MOCK_ALERTS = [
   {
     type: 'rain',
     icon: '🌧️',
-    title: 'Heavy Rainfall Advisory — Warangal, Nalgonda',
+    title: 'Heavy Rainfall Advisory - Warangal, Nalgonda',
     district: 'Warangal',
     time: '08:14 AM',
     detail: 'IMD forecast: 64mm rainfall in next 48h. Delay irrigation, check drainage.'
@@ -150,7 +150,7 @@ var MOCK_ALERTS = [
   {
     type: 'pest',
     icon: '🦗',
-    title: 'Fall Armyworm Alert — Guntur, Kurnool',
+    title: 'Fall Armyworm Alert - Guntur, Kurnool',
     district: 'Guntur',
     time: '07:30 AM',
     detail: 'Scouting recommended. Threshold: >2 larvae per plant. Spray Spinosad 45 SC.'
@@ -158,7 +158,7 @@ var MOCK_ALERTS = [
   {
     type: 'heat',
     icon: '🌡️',
-    title: 'Heat Wave Warning — Vidisha, Madhubani',
+    title: 'Heat Wave Warning - Vidisha, Madhubani',
     district: 'Vidisha',
     time: '06:45 AM',
     detail: 'Temp forecast: 42°C+. Irrigate in evening. Cover nursery seedlings.'
@@ -166,7 +166,7 @@ var MOCK_ALERTS = [
   {
     type: 'frost',
     icon: '❄️',
-    title: 'Night Frost Risk — Nashik (Grapes)',
+    title: 'Night Frost Risk - Nashik (Grapes)',
     district: 'Nashik',
     time: 'Yesterday 11 PM',
     detail: 'Min temp expected to drop below 4°C. Use frost protection nets.'
@@ -174,7 +174,7 @@ var MOCK_ALERTS = [
   {
     type: 'rain',
     icon: '⛈️',
-    title: 'Thunderstorm Alert — Solapur',
+    title: 'Thunderstorm Alert - Solapur',
     district: 'Solapur',
     time: 'Yesterday 9 PM',
     detail: 'Lightning risk during evening hours. Avoid open fields 4–7 PM.'
@@ -197,12 +197,12 @@ var MOCK_FARMERS = [
 // ============================================================
 
 var MOCK_CHAT_RESPONSES = {
-  default_te: `నమస్కారం! మీ సమస్య అర్థమైంది. 🌿\n\nఆకులు పసుపు రంగుకు మారడం సాధారణంగా నత్రజని లోపం (Nitrogen Deficiency) వల్ల జరుగుతుంది.\n\n**సూచించిన చికిత్స:**\n• యూరియా 2% స్ప్రే (20g/litre) వారానికి ఒకసారి\n• మట్టి పరీక్ష చేయించుకోండి\n• నీరు పెట్టే సమయం మార్చండి — ఉదయం పెట్టండి\n\n⚠️ RSK కేంద్రానికి తెలియజేశాం.`,
-  default_hi: `नमस्ते किसान भाई! 🌾\n\nआपके सवाल के आधार पर — इस मौसम में Warangal के लिए सबसे अच्छी फसलें:\n\n🥇 **कपास (Cotton)** — मिट्टी अनुकूलता 88%\n🥈 **सोयाबीन** — 74%, अच्छी बाजार मांग\n🥉 **मक्का** — 61%, कम पानी में भी अच्छी\n\nMSP 2024-25: कपास ₹7,121/क्विंटल\n\nक्या आप विस्तृत जानकारी चाहते हैं?`,
+  default_te: `నమస్కారం! మీ సమస్య అర్థమైంది. 🌿\n\nఆకులు పసుపు రంగుకు మారడం సాధారణంగా నత్రజని లోపం (Nitrogen Deficiency) వల్ల జరుగుతుంది.\n\n**సూచించిన చికిత్స:**\n• యూరియా 2% స్ప్రే (20g/litre) వారానికి ఒకసారి\n• మట్టి పరీక్ష చేయించుకోండి\n• నీరు పెట్టే సమయం మార్చండి - ఉదయం పెట్టండి\n\n⚠️ RSK కేంద్రానికి తెలియజేశాం.`,
+  default_hi: `नमस्ते किसान भाई! 🌾\n\nआपके सवाल के आधार पर - इस मौसम में Warangal के लिए सबसे अच्छी फसलें:\n\n🥇 **कपास (Cotton)** - मिट्टी अनुकूलता 88%\n🥈 **सोयाबीन** - 74%, अच्छी बाजार मांग\n🥉 **मक्का** - 61%, कम पानी में भी अच्छी\n\nMSP 2024-25: कपास ₹7,121/क्विंटल\n\nक्या आप विस्तृत जानकारी चाहते हैं?`,
   default_en: `Hello! Based on your query, here's what our AI analysis suggests:\n\nFor your district and current season, we recommend focusing on soil health monitoring. Our Gemini-powered system has analyzed historical crop data for 11 districts.\n\n📊 Confidence Score: 87%\n\nWould you like a detailed recommendation with input costs?`,
-  crop_advice: `🌾 **Crop Recommendation — ${nowDateStr()}**\n\nBased on soil data, rainfall forecast & MSP for your district:\n\n1. 🥇 Cotton — Suitability 88%, MSP ₹7,121\n2. 🥈 Soybean — Suitability 74%, MSP ₹4,600\n3. 🥉 Maize — Suitability 61%, Good market demand\n\n💧 Water requirement: Cotton needs 700mm/season\n📅 Best sowing window: June 15 – July 10`,
-  weather_alert: `⛈️ **Weather Alert — Active**\n\nDistrict: ${currentDistrict || 'Your District'}\nIMD Forecast (next 72h):\n\n• Rainfall: 45–60mm expected\n• Max Temp: 36°C | Min: 24°C\n• Wind: NE 18 km/h\n\n⚠️ **Advisory:** Delay pesticide spray for 2 days. Ensure proper drainage in fields.\n\n🌦 Next dry window: Thursday onwards`,
-  diagnose: `🔬 **Gemini Vision Analysis Complete**\n\nCrop: Groundnut\nDisease Detected: **Leaf Spot (Cercospora arachidicola)**\nConfidence: 91%\nSeverity: HIGH\n\n💊 **Treatment Protocol:**\n• Mancozeb 75 WP @ 2g/L — spray immediately\n• Remove infected leaves\n• Avoid overhead irrigation\n\n🚩 Case flagged to RSK Chittoor Block 3 for field visit.`
+  crop_advice: `🌾 **Crop Recommendation - ${nowDateStr()}**\n\nBased on soil data, rainfall forecast & MSP for your district:\n\n1. 🥇 Cotton - Suitability 88%, MSP ₹7,121\n2. 🥈 Soybean - Suitability 74%, MSP ₹4,600\n3. 🥉 Maize - Suitability 61%, Good market demand\n\n💧 Water requirement: Cotton needs 700mm/season\n📅 Best sowing window: June 15 – July 10`,
+  weather_alert: `⛈️ **Weather Alert - Active**\n\nDistrict: ${currentDistrict || 'Your District'}\nIMD Forecast (next 72h):\n\n• Rainfall: 45–60mm expected\n• Max Temp: 36°C | Min: 24°C\n• Wind: NE 18 km/h\n\n⚠️ **Advisory:** Delay pesticide spray for 2 days. Ensure proper drainage in fields.\n\n🌦 Next dry window: Thursday onwards`,
+  diagnose: `🔬 **Gemini Vision Analysis Complete**\n\nCrop: Groundnut\nDisease Detected: **Leaf Spot (Cercospora arachidicola)**\nConfidence: 91%\nSeverity: HIGH\n\n💊 **Treatment Protocol:**\n• Mancozeb 75 WP @ 2g/L - spray immediately\n• Remove infected leaves\n• Avoid overhead irrigation\n\n🚩 Case flagged to RSK Chittoor Block 3 for field visit.`
 };
 
 // ============================================================
@@ -286,7 +286,7 @@ function addMessage(role, text, senderLabel) {
   return wrap;
 }
 
-// Very simple text formatter — bold, line breaks, bullets
+// Very simple text formatter - bold, line breaks, bullets
 function formatBotText(text) {
   if (!text) return '';
   // Strip --- horizontal rules (look AI-generated)
@@ -329,7 +329,7 @@ function scrollChatToBottom() {
 
 // ---- Pre-populate demo conversation on load ----
 function loadDemoConversation() {
-  addDateSep('Today — ' + nowDateStr());
+  addDateSep('Today - ' + nowDateStr());
 
   // Turn 1: Farmer sends Telugu message about crop issue
   addMessage('farmer', 'నా వేరుశెనగ ఆకులపై మచ్చలు వస్తున్నాయి 😟 చాలా భయంగా ఉంది', 'Ramaiah (+91 94408 12345)');
@@ -347,7 +347,7 @@ function loadDemoConversation() {
     addMessage('bot', MOCK_CHAT_RESPONSES.default_hi, 'KisanAlert 🌿');
   }, 2400);
 
-  // Turn 3: LIVE PHOTO MOMENT — farmer sends a real crop photo
+  // Turn 3: LIVE PHOTO MOMENT - farmer sends a real crop photo
   setTimeout(function() {
     addPhotoMessage(
       'Ramaiah (+91 94408 12345)',
@@ -451,7 +451,7 @@ function formatRecommendResponse(data) {
     var text = '🌾 **Crop Recommendations for ' + currentDistrict + ':**\n\n';
     data.recommendations.forEach(function(r, i) {
       var medal = ['🥇', '🥈', '🥉'][i] || '•';
-      text += medal + ' **' + r.crop + '** — Score: ' + r.score + '%\n';
+      text += medal + ' **' + r.crop + '** - Score: ' + r.score + '%\n';
       if (r.msp) text += '   MSP: ₹' + r.msp + '/qtl\n';
     });
     return text;
@@ -466,7 +466,7 @@ function formatWeatherResponse(data) {
   return MOCK_CHAT_RESPONSES.weather_alert;
 }
 
-// ---- Mic button — simulated voice input ----
+// ---- Mic button - simulated voice input ----
 var micActive = false;
 var voiceSamples = [
   'मेरी फसल में कीड़े लग गए हैं',
@@ -527,7 +527,7 @@ var CROP_EMOJI_MAP = {
 };
 
 var CROP_PHOTO_MAP = {
-  // Local generated images — guaranteed to match the disease
+  // Local generated images - guaranteed to match the disease
   'Groundnut':  'img/groundnut_leaf_spot.png',
   'Cotton':     'img/cotton_leaf_curl.png',
   'Chilli':     'img/chilli_anthracnose.png',
@@ -542,19 +542,19 @@ var CROP_PHOTO_MAP = {
   'default':    'https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=60&h=60&fit=crop'
 };
 
-// Normalize a case object — handles ALL possible shapes from backend + mock
+// Normalize a case object - handles ALL possible shapes from backend + mock
 // Backend actual fields: case_id, disease, rsk (obj {name,phone}), crop, no farmer_name
 // Mock fields: id, diagnosis, rsk (string), cropEmoji
 // idx is used to generate a stable deterministic ID when no ID field exists
 function normalizeCase(c, idx) {
-  // farmer display — backend has no farmer_name, use district + case ID
+  // farmer display - backend has no farmer_name, use district + case ID
   var farmerName = c.farmer_name || c.farmer || '';
   var farmerPhone = (c.farmer_id && c.farmer_id.startsWith('+')) ? c.farmer_id : '';
   var farmerDisplay;
   if (farmerName) {
     farmerDisplay = farmerName + (farmerPhone ? '<br><small style="opacity:0.6">' + farmerPhone + '</small>' : '');
   } else {
-    // backend cases have no farmer name — show district + a farmer persona
+    // backend cases have no farmer name - show district + a farmer persona
     var districtFarmers = {
       'Warangal': 'Ramaiah G.', 'Guntur': 'Kavitha S.', 'Nalgonda': 'Laxmi Devi',
       'Kurnool': 'David Thomas', 'Vidisha': 'Rajendra Yadav', 'Nashik': 'Mangesh Patil',
@@ -564,7 +564,7 @@ function normalizeCase(c, idx) {
     farmerDisplay = districtFarmers[c.district] || ('Farmer, ' + (c.district || ''));
   }
 
-  // RSK — could be: string, object {name, phone}, or missing
+  // RSK - could be: string, object {name, phone}, or missing
   var rskDisplay = '';
   var rskPhone = '';
   var rskOfficer = '';
@@ -579,7 +579,7 @@ function normalizeCase(c, idx) {
     rskDisplay = 'RSK ' + (c.district || 'Center');
   }
 
-  // diagnosis — backend uses 'disease', mock uses 'diagnosis'
+  // diagnosis - backend uses 'disease', mock uses 'diagnosis'
   var diagText = c.diagnosis || c.disease || c.disease_name || 'Under review';
 
   // crop
@@ -587,7 +587,7 @@ function normalizeCase(c, idx) {
   var photoUrl = CROP_PHOTO_MAP[cropKey] || CROP_PHOTO_MAP['default'];
   var emoji = CROP_EMOJI_MAP[cropKey] || c.cropEmoji || '🌿';
 
-  // ID — backend uses case_id, mock uses id, fallback uses stable index
+  // ID - backend uses case_id, mock uses id, fallback uses stable index
   var caseId = c.case_id || c.id || ('CASE-' + String(idx !== undefined ? idx : Math.floor(Math.random()*9000+1000)).padStart(4,'0'));
 
   return {
@@ -595,7 +595,7 @@ function normalizeCase(c, idx) {
     id: caseId,
     farmerDisplay: farmerDisplay,
     farmerName: farmerName || farmerDisplay,
-    district: c.district || '—',
+    district: c.district || '-',
     cropKey: cropKey,
     photoUrl: photoUrl,
     emoji: emoji,
@@ -634,7 +634,7 @@ function renderFlaggedCases(cases) {
   }
 
   cases.forEach(function(c, idx) {
-    // c is already normalized — use directly, no second normalizeCase call
+    // c is already normalized - use directly, no second normalizeCase call
     var isNorm = !!c.farmerDisplay;
     if (!isNorm) c = normalizeCase(c, idx);
 
@@ -784,7 +784,7 @@ function renderRecommendations(recs) {
     var maxScore = Math.max.apply(null, rec.crops.map(function(c) { return c.score; }));
 
     var cropsHtml = rec.crops.map(function(c, ci) {
-      // Width is proportional relative to the top crop — not just raw %
+      // Width is proportional relative to the top crop - not just raw %
       // This makes the visual difference obvious even when scores are 88/74/61
       var barWidth = Math.round((c.score / maxScore) * 100);
       var color = rankColors[ci] || '#4ade80';
@@ -854,7 +854,7 @@ function renderFarmers(farmers) {
     card.className = 'farmer-card';
     card.style.animationDelay = (idx * 0.05) + 's';
 
-    // Initials avatar — two letters, colored circle
+    // Initials avatar - two letters, colored circle
     var parts = (f.name || '?').split(' ');
     var initials = parts.length > 1
       ? parts[0][0] + parts[parts.length - 1][0]
@@ -942,7 +942,7 @@ var _idleTimer = null;
 function pauseTicker() {
   _tickerPaused = true;
   var tickerText = document.getElementById('ticker-text');
-  if (tickerText) tickerText.textContent = 'Live monitoring active — paused during interaction';
+  if (tickerText) tickerText.textContent = 'Live monitoring active - paused during interaction';
 
   // Auto-resume after 30s of no interaction
   clearTimeout(_idleTimer);
@@ -950,7 +950,7 @@ function pauseTicker() {
     _tickerPaused = false;
     tickerCountdown = 30;
     var t = document.getElementById('ticker-text');
-    if (t) t.textContent = 'Live monitoring active — Next update in 30s';
+    if (t) t.textContent = 'Live monitoring active - Next update in 30s';
   }, 30000);
 }
 
@@ -969,7 +969,7 @@ function startLiveTicker() {
     if (_tickerPaused) return;
     tickerCountdown--;
     if (tickerText) {
-      tickerText.textContent = 'Live monitoring active — Next update in ' + tickerCountdown + 's';
+      tickerText.textContent = 'Live monitoring active - Next update in ' + tickerCountdown + 's';
     }
     if (tickerCountdown <= 0) {
       tickerCountdown = 30;
@@ -1001,11 +1001,11 @@ function performLiveUpdate() {
     }
     if (tickerText) tickerText.textContent = '✅ Updated just now';
     setTimeout(function() {
-      if (tickerText) tickerText.textContent = 'Live monitoring active — Next update in 30s';
+      if (tickerText) tickerText.textContent = 'Live monitoring active - Next update in 30s';
     }, 2000);
   }
 
-  // Always resolve within 1.5s — no way to get stuck
+  // Always resolve within 1.5s - no way to get stuck
   setTimeout(finish, 1500);
 }
 
@@ -1196,7 +1196,7 @@ function delay(ms) {
 }
 
 // ============================================================
-//  INIT — everything kicks off here
+//  INIT - everything kicks off here
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -1259,7 +1259,7 @@ function toggleConnectivity() {
     if (chatEl) {
       var note = document.createElement('div');
       note.style.cssText = 'text-align:center;font-size:11px;color:#f59e0b;padding:6px;margin:4px 0;background:rgba(245,158,11,0.1);border-radius:8px;border:1px solid rgba(245,158,11,0.2)';
-      note.textContent = '⚠️ Low connectivity — switching to SMS fallback mode';
+      note.textContent = '⚠️ Low connectivity - switching to SMS fallback mode';
       chatEl.appendChild(note);
       scrollChatToBottom();
     }
@@ -1269,7 +1269,7 @@ function toggleConnectivity() {
     if (chatEl) {
       var note2 = document.createElement('div');
       note2.style.cssText = 'text-align:center;font-size:11px;color:#4ade80;padding:6px;margin:4px 0;background:rgba(74,222,128,0.08);border-radius:8px;border:1px solid rgba(74,222,128,0.15)';
-      note2.textContent = '✅ Data connection restored — switching back to full mode';
+      note2.textContent = '✅ Data connection restored - switching back to full mode';
       chatEl.appendChild(note2);
       scrollChatToBottom();
     }

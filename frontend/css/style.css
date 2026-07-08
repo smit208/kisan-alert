@@ -1,5 +1,5 @@
-/* =====================================================
-   KisanAlert Dashboard — style.css
+﻿/* =====================================================
+   KisanAlert Dashboard - style.css
    Dark agri-tech theme with glassmorphism
    ===================================================== */
 
@@ -212,7 +212,7 @@ body {
 }
 
 /* =====================================================
-   DASHBOARD GRID — TWO PANELS
+   DASHBOARD GRID - TWO PANELS
    ===================================================== */
 .dashboard-grid {
   display: grid;
@@ -277,7 +277,7 @@ body {
 }
 
 /* =====================================================
-   LEFT PANEL — FARMER SIMULATOR
+   LEFT PANEL - FARMER SIMULATOR
    ===================================================== */
 .panel-left {
   display: flex;
@@ -693,7 +693,7 @@ body {
 }
 
 /* =====================================================
-   RIGHT PANEL — ADMIN VIEW
+   RIGHT PANEL - ADMIN VIEW
    ===================================================== */
 .panel-right {
   display: flex;
